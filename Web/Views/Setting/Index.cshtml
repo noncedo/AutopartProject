@@ -1,4 +1,4 @@
-﻿
+﻿@model List<DataAccess.Setting>
 @{
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -8,69 +8,166 @@
 <h3>Setting </h3>
 <br />
 
-@(Html.Kendo().Grid<DataAccess.Setting>()
-                .Name("grid")
-                .Columns(columns =>
-                {
-                    columns.Bound(e => e.Key);
-                    columns.Bound(e => e.Value);
-                    columns.ForeignKey(e => e.ProcessId, (IEnumerable<DataAccess.Process>)ViewData["Processes"], "ProcessId", "Name")
-                    .EditorTemplateName("GridForeignKey");
+<div class=" table-responsive">
+    <table class="table table-striped table-hover table-bordered" id="table">
 
-                    columns.Command(command => { command.Edit(); command.Destroy(); }).Width(250);
-                })
-                .ToolBar(toolbar => toolbar.Create())
-                .Editable(editable => editable.Mode(GridEditMode.InLine).ConfirmDelete("Confirmation").DisplayDeleteConfirmation("Test"))
-                .DataSource(dataSource => dataSource
-                    .Custom()
-                    .Type("odata-v4")
-                    .Schema(schema => schema
-                    .Model(m =>
-                    {
-                        m.Id(t => t.SettingId);
-                        m.Field(t => t.SettingId).Editable(false);
-                        m.Field(t => t.ProcessId);
-                        m.Field(t => t.Key);
-                        m.Field(t => t.Value);
-                    }))
-                    .Transport(t =>
-                    {
-                        t.Read(new { url = new Kendo.Mvc.ClientHandlerDescriptor() { HandlerName = "read" } });
-                        t.Update(new { url = new Kendo.Mvc.ClientHandlerDescriptor() { HandlerName = "update" } });
-                        t.Create(new { url = new Kendo.Mvc.ClientHandlerDescriptor() { HandlerName = "create" } });
-                        t.Destroy(new { url = new Kendo.Mvc.ClientHandlerDescriptor() { HandlerName = "destroy" } });
-                    }
-                    )
-                    .PageSize(20)
-                    .ServerPaging(true)
-                    .ServerSorting(true)
-                    .ServerFiltering(true)
-                )
-                .Pageable(pageable => pageable
-                    .Refresh(true)
-                    .PageSizes(true)
-                    .ButtonCount(5))
-                .Sortable()
-                .Filterable()
+        <thead>
+            <tr>
+                <th>Key</th>
+                <th>Value</th>
+                <th>Process</th>
+                <th>Edit</th>
+                <th>Delete</th>
+            </tr>
+        </thead>
 
-)
+        <tbody>
+            @for (int i = 0; i < Model.Count; i++)
+            {
+                <tr class=@(Model[i].Key + "_" + i)>
+                    <td class=@("key_" + i )>@Model[i].Key</td>
+                    <td class=@("value_" + i )>@Model[i].Value</td>
+
+                    <td class=@("process_" + i )>
+                        <select id="processSelect" class="dropdown form-control">
+                            @foreach (var val in (List<DataAccess.Process>)ViewData["Processes"])
+                            {
+                                <option class="dropdown-item" value="@val.ProcessId">@val.Name</option>
+                            }
+                        </select>
+                    <td>
+                        <input id=@("editBtn_" + i) type="button" value="Edit" onclick="Edit('@Model[i].Key',@Model[i].SettingId,@Model[i].ProcessId, @i, '@Model[i].Value')" class="btn btn-info" />
+                        @*<input type="button" value="Cancel" onclick="CancelEdit(@i)" class="btn btn-warning"/>*@
+                    </td>
+                    <td><input type="button" value="Delete" class="btn btn-danger" onclick="Delete(@Model[i].SettingId)" /> </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
 
 <script>
-        function read() {
-            var baseUrl = "@Url.Content("~")";
-            return baseUrl + "odata/Settings";
+
+    function Edit(key,settingId,processId, index, value) {
+
+        var btnText = $('#editBtn_' + index).val();
+
+       
+
+        key = key + '_' + index;
+
+        alert(key);
+
+        if (btnText == 'Edit') {
+            $('#editBtn_' + index).val('Save');
+            
+            $('.' + key + ' td.key_' + index).empty();
+            $('.' + key + ' td.key_' + index).html('<input id="txtKey_' + index + '" type="text" value="' + key.replace('_' + index, '') + '" class="form-control" />');
+
+            $('.' + key + ' td.value_' + index).empty();
+            $('.' + key + ' td.value_' + index).html('<input id="txtValue_' + index + '"  type="text" value="' + value + '" class="form-control" />');
+
         }
-        function update(dataItem) {
-            var baseUrl = "@Url.Content("~")";
-            return baseUrl + "odata/Settings(" + dataItem.SettingId + ")";
+        else {
+            $('#editBtn_' + index).val('Edit');
+
+            var myObj =
+            {
+                id: settingId,
+                processId: $('#processSelect').val(),
+                key: $('#txtKey_' + index).val(),
+                value: $('#txtValue_' + index).val(),
+                process: $('#processSelect :selected').text()
+            }
+            $.post('@Url.Action("UpdateSetting", "Setting")', myObj, function (result) {
+                if (result.success == true) {
+                    alert('Updated!');
+                    location.reload();
+                }
+                else
+                    alert("error occured")
+            });
         }
-        function create(dataItem) {
-            delete dataItem.ProductID;
-            var baseUrl = "@Url.Content("~")";
-            return baseUrl + "odata/Settings";
-        }
-        function destroy(dataItem) {
-            var baseUrl = "@Url.Content("~")";
-            return baseUrl + "odata/Settings(" + dataItem.SettingId + ")";
-        }
+    }
+
+    function Delete(dealerId) {
+        $.post('@Url.Action("Delete", "Setting")', { id: dealerId }, function (result) {
+            if (result.success == true) {
+                alert("Deleted");
+                location.reload();
+            }
+            else
+                alert("error occured")
+        })
+    }
 </script>
+
+
+
+@*@(Html.Kendo().Grid<DataAccess.Setting>()
+                    .Name("grid")
+                    .Columns(columns =>
+                    {
+                        columns.Bound(e => e.Key);
+                        columns.Bound(e => e.Value);
+                        columns.ForeignKey(e => e.ProcessId, (IEnumerable<DataAccess.Process>)ViewData["Processes"], "ProcessId", "Name")
+                        .EditorTemplateName("GridForeignKey");
+
+                        columns.Command(command => { command.Edit(); command.Destroy(); }).Width(250);
+                    })
+                    .ToolBar(toolbar => toolbar.Create())
+                    .Editable(editable => editable.Mode(GridEditMode.InLine).ConfirmDelete("Confirmation").DisplayDeleteConfirmation("Test"))
+                    .DataSource(dataSource => dataSource
+                        .Custom()
+                        .Type("odata-v4")
+                        .Schema(schema => schema
+                        .Model(m =>
+                        {
+                            m.Id(t => t.SettingId);
+                            m.Field(t => t.SettingId).Editable(false);
+                            m.Field(t => t.ProcessId);
+                            m.Field(t => t.Key);
+                            m.Field(t => t.Value);
+                        }))
+                        .Transport(t =>
+                        {
+                            t.Read(new { url = new Kendo.Mvc.ClientHandlerDescriptor() { HandlerName = "read" } });
+                            t.Update(new { url = new Kendo.Mvc.ClientHandlerDescriptor() { HandlerName = "update" } });
+                            t.Create(new { url = new Kendo.Mvc.ClientHandlerDescriptor() { HandlerName = "create" } });
+                            t.Destroy(new { url = new Kendo.Mvc.ClientHandlerDescriptor() { HandlerName = "destroy" } });
+                        }
+                        )
+                        .PageSize(20)
+                        .ServerPaging(true)
+                        .ServerSorting(true)
+                        .ServerFiltering(true)
+                    )
+                    .Pageable(pageable => pageable
+                        .Refresh(true)
+                        .PageSizes(true)
+                        .ButtonCount(5))
+                    .Sortable()
+                    .Filterable()
+
+    )
+
+    <script>
+            function read() {
+                var baseUrl = "@Url.Content("~")";
+                return baseUrl + "odata/Settings";
+            }
+            function update(dataItem) {
+                var baseUrl = "@Url.Content("~")";
+                return baseUrl + "odata/Settings(" + dataItem.SettingId + ")";
+            }
+            function create(dataItem) {
+                delete dataItem.ProductID;
+                var baseUrl = "@Url.Content("~")";
+                return baseUrl + "odata/Settings";
+            }
+            function destroy(dataItem) {
+                var baseUrl = "@Url.Content("~")";
+                return baseUrl + "odata/Settings(" + dataItem.SettingId + ")";
+            }
+    </script>*@

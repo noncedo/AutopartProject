@@ -26,14 +26,16 @@ namespace Web.Controllers
             return View(repository.Get<DealerGroup>().ToList());
         }
 
+       
+
         [HttpPost]
-        public JsonResult UpdateDealerGroup(int id,string code,int dealerGroupId,string name, int dmsProviderId)
+        public JsonResult UpdateDealerGroup(int id,string code,string name, int dmsProviderId)
         {
             var dealerGroupObj = new DealerGroup()
             {
                DealerGroupId = id,
                Code=code,
-              DmsProviderId = dmsProviderId,
+               DmsProviderId = dmsProviderId,
                Name = name
 
             };
@@ -47,7 +49,7 @@ namespace Web.Controllers
         [HttpPost]
         public JsonResult Delete(int dealerId)
         {
-            repository.Delete<Dealer>(dealerId);
+            repository.Delete<DealerGroup>(dealerId);
             repository.Save();
 
             return Json(new { success = true });

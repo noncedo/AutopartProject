@@ -36,7 +36,7 @@
                             }
                         </select>
                     <td>
-                        <input id=@("editBtn_" + i) type="button" value="Edit" onclick="Edit('@Model[i].Code','@Model[i].DealerGroupId','@Model[i].Name', @i, '@Model[i].DmsProviderId')" class="btn btn-info" />
+                        <input id=@("editBtn_" + i) type="button" value="Edit" onclick="Edit('@Model[i].Code',@Model[i].DealerGroupId,'@Model[i].Name', @i, @Model[i].DmsProviderId)" class="btn btn-info" />
                         @*<input type="button" value="Cancel" onclick="CancelEdit(@i)" class="btn btn-warning"/>*@
                     </td>
                     <td><input type="button" value="Delete" class="btn btn-danger" onclick="Delete(@Model[i].DealerGroupId)" /> </td>
@@ -46,26 +46,26 @@
     </table>
 </div>
 
-
 <script>
-
     function Edit(code,dealerGroupId,name, index, dmsProviderId) {
 
         var btnText = $('#editBtn_' + index).val();
-
+        var firstCode = code;
         code = code + '_' + index;
 
-        alert(dealerGroupId);
+       
 
         if (btnText == 'Edit') {
             $('#editBtn_' + index).val('Save');
-            //var oldCodeHtml = $('.' + code + ' td.code_' + index).html();
+
+            alert(firstCode);
+
             $('.' + code + ' td.code_' + index).empty();
-            $('.' + code + ' td.code_' + index).html('<input id="txtCode_' + index + '" type="text" value="' + code.replace('_' + index, '') + '" class="form-control" />');
+            $('.' + code + ' td.code_' + index).html('<input id="txtCode_' + index + '" type="text" value="' + firstCode/*code.replace('_' + index, '')*/ + '" class="form-control" />');
 
             $('.' + code + ' td.name_' + index).empty();
             $('.' + code + ' td.name_' + index).html('<input id="txtName_' + index + '"  type="text" value="' + name + '" class="form-control" />');
-           
+
         }
         else {
             $('#editBtn_' + index).val('Edit');
@@ -77,11 +77,13 @@
                 name: $('#txtName_' + index).val(),
                 code: $('#txtCode_' + index).val(),
                 dmsProvider: $('#providerSelect :selected').text(),
-
             }
+           
 
             $.post('@Url.Action("UpdateDealerGroup", "DealerGroup")', myObj, function (result) {
+               
                 if (result.success == true) {
+
                 alert('Updated!');
                     location.reload();
                 }
@@ -92,19 +94,7 @@
     }
 
     function Delete(dealerId) {
-        $.post('@Url.Action("Delete", "Dealer")', { dealerId: dealerId }, function (result) {
-            if (result.success == true) {
-                alert("Deleted");
-                location.reload();
-            }
-            else
-                alert("error occured")
-        })
-    }
-
-
-    function Delete(dealerId) {
-        $.post('@Url.Action("Delete", "Dealer")', { dealerId: dealerId }, function (result) {
+        $.post('@Url.Action("Delete", "DealerGroup")', { dealerId: dealerId }, function (result) {
             if (result.success == true) {
                 alert("Deleted");
                 location.reload();

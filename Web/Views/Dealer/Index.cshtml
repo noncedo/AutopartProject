@@ -101,7 +101,7 @@
     }
 
 
-    function Delete(dealerId) {
+    @*function Delete(dealerId) {
         $.post('@Url.Action("Delete", "Dealer")', { dealerId: dealerId }, function (result) {
             if (result.success == true) {
                 alert("Deleted");
@@ -110,7 +110,7 @@
             else
                 alert("error occured")
         })
-    }
+    }*@
     </script>
 
 
