@@ -47,5 +47,18 @@ namespace Web.Controllers
 
             return Json(new { success = true });
         }
+
+        [HttpPost]
+        public JsonResult Save(string name)
+        {
+            var provider = new DmsProvider()
+            {
+                Name = name
+            };
+            repository.Create<DmsProvider>(provider);
+            repository.Save();
+
+            return Json(new { success = true });
+        }
     }
 }

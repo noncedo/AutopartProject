@@ -7,6 +7,13 @@
 
 <h2>DMS Providers</h2>
 
+<div class="row p-2">
+    <div class="col-3">
+        <input type="button" value="Add" onclick="Add('')" class="btn btn-outline-dark btn-block" />
+    </div>
+    <div class="offset-9">
+    </div>
+</div>
 
 <div class=" table-responsive">
     <table class="table table-striped table-hover table-bordered" id="table">
@@ -25,7 +32,8 @@
                
                 <td class=@("name_" + i )>@Model[i].Name</td>
 
-                <td><input id=@("editBtn_" + i) type="button" value="Edit" onclick="Edit('@Model[i].DmsProviderId', @i, '@Model[i].Name')" class="btn btn-info" /></td>
+                <td><input id=@("editBtn_" + i) type="button" value="Edit" onclick="Edit('@Model[i].DmsProviderId', @i, '@Model[i].Name')" class="btn btn-info" />
+                    <input id=@("cancelBtn_" + i) type="button" value="Cancel" onclick="Cancel(@i,@Model[i].DmsProviderId, '@Model[i].Name')" class="btn btn-outline-info" hidden /></td>
              
                 <td><input type="button" value="Delete" class="btn btn-danger" onclick="Delete(@Model[i].DmsProviderId)"/> </td>
             </tr>
@@ -38,10 +46,33 @@
 
 <script>
 
+         function Add(action) {
+
+        if (action == '') {
+            $('#table tr:first')
+                .after('<tr>' +
+                '<td><input id="txtProviderName" type="text" placeholder="Username" class="form-control" /></td>' + 
+                '<td><input id="saveNew" type="button" value="Save" class="btn btn-info" onclick="Add(\'Save\')"/></td>' +
+                '<td></td></tr>');
+        }
+        else if (action == 'Save') {
+            $('#saveNew').attr('hidden', 'hidden');
+            var myObj =
+            {
+                name: $('#txtProviderName').val()
+            }
+            $.post('@Url.Action("Save", "DmsProvider")', myObj, function (result) {
+                if (result.success == true) {
+                    alert('Saved!');
+                    location.reload();
+                }
+                else
+                    alert("error occured")
+            });
+        }
+    }
+
     function Edit(id,index,name) {
-
-        alert(index);
-
         var dmsId = id;
 
         var btnText = $('#editBtn_' + index).val();
@@ -52,6 +83,7 @@
         if (btnText == 'Edit')
         {
             $('#editBtn_' + index).val('Save');
+            $('#cancelBtn_' + index).removeAttr('hidden');
 
             $('.' + dmsId + ' td.name_' + index).empty();
             $('.' + dmsId + ' td.name_' + index).html('<input id="txtName_' + index + '"  type="text" value="' + name + '" class="form-control" />');
@@ -62,7 +94,6 @@
         }
         else {
             $('#editBtn_' + index).val('Edit');
-
             var myObj =
             {
                 dmsid:id,
@@ -80,6 +111,16 @@
                     alert("error occured")
             });
         }
+    }
+
+    function Cancel(index, id, name) {
+        $('#cancelBtn_' + index).attr('hidden', 'hidden');
+        $('#editBtn_' + index).val('Edit');
+
+        id = id + '_' + index;
+        $('.' + id + ' td.name_' + index).html(name);
+
+
     }
 
     function Delete(id) {

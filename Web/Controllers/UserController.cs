@@ -50,5 +50,20 @@ namespace Web.Controllers
             return Json(new { success = true });
         }
 
+        [HttpPost]
+        public JsonResult Save(string name, string domain)
+        {
+            var newUser = new User()
+            {
+                Username = name,
+                Domain = domain
+            };
+
+            repository.Create<User>(newUser);
+            repository.Save();
+
+            return Json(new { success = true });
+        }
+
     }
 }

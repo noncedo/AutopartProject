@@ -44,6 +44,23 @@ namespace Web.Controllers
         }
 
         [HttpPost]
+        public JsonResult Save(int groupId, string name, string code)
+        {
+            var newDealer = new Dealer()
+            {
+                Code = code,
+                Name = name,
+                DealerGroupId = groupId,
+                IsActive = true
+            };
+
+            repository.Create<Dealer>(newDealer);
+            repository.Save();
+
+            return Json(new { success = true });
+        }
+
+        [HttpPost]
         public JsonResult Delete(int dealerId)
         {
             repository.Delete<Dealer>(dealerId);
