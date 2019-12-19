@@ -1,0 +1,997 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <!--<Schema Namespace="AutoPartModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">-->
+      <Schema Namespace="AutoPartModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Dealer">
+          <Key>
+            <PropertyRef Name="DealerId" />
+          </Key>
+          <Property Name="DealerId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="DealerGroupId" Type="int" Nullable="false" />
+          <Property Name="Code" Type="varchar" MaxLength="5" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="IsActive" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="DealerGroup">
+          <Key>
+            <PropertyRef Name="DealerGroupId" />
+          </Key>
+          <Property Name="DealerGroupId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="DmsProviderId" Type="int" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Code" Type="varchar" MaxLength="10" />
+        </EntityType>
+        <EntityType Name="DmsProvider">
+          <Key>
+            <PropertyRef Name="DmsProviderId" />
+          </Key>
+          <Property Name="DmsProviderId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="FileDestination">
+          <Key>
+            <PropertyRef Name="FileId" />
+          </Key>
+          <Property Name="FileId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ProcessRunId" Type="int" Nullable="false" />
+          <Property Name="Path" Type="varchar" MaxLength="250" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="FileLine">
+          <Key>
+            <PropertyRef Name="FileLineId" />
+          </Key>
+          <Property Name="FileLineId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="FileSourceId" Type="int" Nullable="false" />
+          <Property Name="FileDestinationId" Type="int" />
+          <Property Name="Line" Type="varchar" MaxLength="250" Nullable="false" />
+          <Property Name="CreateDate" Type="datetime" Nullable="false" />
+        </EntityType>
+        <EntityType Name="FileSource">
+          <Key>
+            <PropertyRef Name="FileId" />
+          </Key>
+          <Property Name="FileId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ProcessRunId" Type="int" Nullable="false" />
+          <Property Name="Path" Type="varchar" MaxLength="250" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ILHAudit">
+          <Key>
+            <PropertyRef Name="ILHAuditId" />
+          </Key>
+          <Property Name="ILHAuditId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ProcessRunId" Type="int" Nullable="false" />
+          <Property Name="DealerId" Type="int" Nullable="false" />
+          <Property Name="Source" Type="varchar" MaxLength="500" Nullable="false" />
+          <Property Name="Destination" Type="varchar" MaxLength="500" Nullable="false" />
+          <Property Name="Timestamp" Type="datetime" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Log">
+          <Key>
+            <PropertyRef Name="LogID" />
+          </Key>
+          <Property Name="LogID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="LogTypeID" Type="int" Nullable="false" />
+          <Property Name="ProcessRunID" Type="int" Nullable="false" />
+          <Property Name="Source" Type="varchar" MaxLength="1000" />
+          <Property Name="Message" Type="varchar" MaxLength="200" Nullable="false" />
+          <Property Name="StackTrace" Type="varchar" MaxLength="500" />
+          <Property Name="LogDate" Type="datetime" Nullable="false" />
+        </EntityType>
+        <EntityType Name="LogType">
+          <Key>
+            <PropertyRef Name="LogTypeID" />
+          </Key>
+          <Property Name="LogTypeID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="LogType" Type="varchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Process">
+          <Key>
+            <PropertyRef Name="ProcessId" />
+          </Key>
+          <Property Name="ProcessId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ProcessRun">
+          <Key>
+            <PropertyRef Name="ProcessRunId" />
+          </Key>
+          <Property Name="ProcessRunId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ProcessId" Type="int" Nullable="false" />
+          <Property Name="Start" Type="datetime" Nullable="false" />
+          <Property Name="End" Type="datetime" />
+          <Property Name="RunStatus" Type="bit" />
+        </EntityType>
+        <EntityType Name="Setting">
+          <Key>
+            <PropertyRef Name="SettingId" />
+          </Key>
+          <Property Name="SettingId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ProcessId" Type="int" Nullable="false" />
+          <Property Name="Key" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Value" Type="varchar" MaxLength="250" Nullable="false" />
+        </EntityType>
+        <EntityType Name="User">
+          <Key>
+            <PropertyRef Name="UserId" />
+          </Key>
+          <Property Name="UserId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Username" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Domain" Type="varchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'AutoPart.dbo.vwILHConsolidation' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="vwILHConsolidation">
+          <Key>
+            <PropertyRef Name="ProcessId" />
+            <PropertyRef Name="Name" />
+            <PropertyRef Name="Start" />
+          </Key>
+          <Property Name="ProcessId" Type="int" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Start" Type="datetime" Nullable="false" />
+          <Property Name="End" Type="datetime" />
+          <Property Name="FileCount" Type="int" />
+          <Property Name="ActiveDealerCount" Type="int" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'AutoPart.dbo.vwProcessRunConsolidation' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="vwProcessRunConsolidation">
+          <Key>
+            <PropertyRef Name="Name" />
+            <PropertyRef Name="Start" />
+            <PropertyRef Name="ProcessRunId" />
+            <PropertyRef Name="ProcessId" />
+          </Key>
+          <Property Name="Name" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Start" Type="datetime" Nullable="false" />
+          <Property Name="End" Type="datetime" />
+          <Property Name="RunStatus" Type="bit" />
+          <Property Name="FileSourceCount" Type="int" />
+          <Property Name="FileDestinationCount" Type="int" />
+          <Property Name="ActiveDealerCount" Type="int" />
+          <Property Name="ProcessRunId" Type="int" Nullable="false" />
+          <Property Name="ProcessId" Type="int" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_Dealer_DealerGroup">
+          <End Role="DealerGroup" Type="Self.DealerGroup" Multiplicity="1" />
+          <End Role="Dealer" Type="Self.Dealer" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="DealerGroup">
+              <PropertyRef Name="DealerGroupId" />
+            </Principal>
+            <Dependent Role="Dealer">
+              <PropertyRef Name="DealerGroupId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_DealerGroup_DealerGroup">
+          <End Role="DmsProvider" Type="Self.DmsProvider" Multiplicity="1" />
+          <End Role="DealerGroup" Type="Self.DealerGroup" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="DmsProvider">
+              <PropertyRef Name="DmsProviderId" />
+            </Principal>
+            <Dependent Role="DealerGroup">
+              <PropertyRef Name="DmsProviderId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_File_ProcessRun">
+          <End Role="ProcessRun" Type="Self.ProcessRun" Multiplicity="1" />
+          <End Role="FileSource" Type="Self.FileSource" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProcessRun">
+              <PropertyRef Name="ProcessRunId" />
+            </Principal>
+            <Dependent Role="FileSource">
+              <PropertyRef Name="ProcessRunId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_FileDestination_FileDestination">
+          <End Role="FileDestination" Type="Self.FileDestination" Multiplicity="1" />
+          <End Role="FileDestination1" Type="Self.FileDestination" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="FileDestination">
+              <PropertyRef Name="FileId" />
+            </Principal>
+            <Dependent Role="FileDestination1">
+              <PropertyRef Name="FileId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_FileDestination_ProcessRun">
+          <End Role="ProcessRun" Type="Self.ProcessRun" Multiplicity="1" />
+          <End Role="FileDestination" Type="Self.FileDestination" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProcessRun">
+              <PropertyRef Name="ProcessRunId" />
+            </Principal>
+            <Dependent Role="FileDestination">
+              <PropertyRef Name="ProcessRunId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_FileLine_FileDestination">
+          <End Role="FileDestination" Type="Self.FileDestination" Multiplicity="0..1" />
+          <End Role="FileLine" Type="Self.FileLine" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="FileDestination">
+              <PropertyRef Name="FileId" />
+            </Principal>
+            <Dependent Role="FileLine">
+              <PropertyRef Name="FileDestinationId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_FileLine_FileSource">
+          <End Role="FileSource" Type="Self.FileSource" Multiplicity="1" />
+          <End Role="FileLine" Type="Self.FileLine" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="FileSource">
+              <PropertyRef Name="FileId" />
+            </Principal>
+            <Dependent Role="FileLine">
+              <PropertyRef Name="FileSourceId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Log_LogType">
+          <End Role="LogType" Type="Self.LogType" Multiplicity="1" />
+          <End Role="Log" Type="Self.Log" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="LogType">
+              <PropertyRef Name="LogTypeID" />
+            </Principal>
+            <Dependent Role="Log">
+              <PropertyRef Name="LogTypeID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Log_ProcessRun">
+          <End Role="ProcessRun" Type="Self.ProcessRun" Multiplicity="1" />
+          <End Role="Log" Type="Self.Log" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProcessRun">
+              <PropertyRef Name="ProcessRunId" />
+            </Principal>
+            <Dependent Role="Log">
+              <PropertyRef Name="ProcessRunID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_LogType_LogType">
+          <End Role="LogType" Type="Self.LogType" Multiplicity="1" />
+          <End Role="LogType1" Type="Self.LogType" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="LogType">
+              <PropertyRef Name="LogTypeID" />
+            </Principal>
+            <Dependent Role="LogType1">
+              <PropertyRef Name="LogTypeID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ProcessRun_Process">
+          <End Role="Process" Type="Self.Process" Multiplicity="1" />
+          <End Role="ProcessRun" Type="Self.ProcessRun" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Process">
+              <PropertyRef Name="ProcessId" />
+            </Principal>
+            <Dependent Role="ProcessRun">
+              <PropertyRef Name="ProcessId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ProcessRun_ProcessRun">
+          <End Role="ProcessRun" Type="Self.ProcessRun" Multiplicity="1" />
+          <End Role="ProcessRun1" Type="Self.ProcessRun" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="ProcessRun">
+              <PropertyRef Name="ProcessRunId" />
+            </Principal>
+            <Dependent Role="ProcessRun1">
+              <PropertyRef Name="ProcessRunId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Setting_Setting">
+          <End Role="Process" Type="Self.Process" Multiplicity="1" />
+          <End Role="Setting" Type="Self.Setting" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Process">
+              <PropertyRef Name="ProcessId" />
+            </Principal>
+            <Dependent Role="Setting">
+              <PropertyRef Name="ProcessId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="AutoPartModelStoreContainer">
+          <EntitySet Name="Dealer" EntityType="Self.Dealer" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="DealerGroup" EntityType="Self.DealerGroup" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="DmsProvider" EntityType="Self.DmsProvider" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="FileDestination" EntityType="Self.FileDestination" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="FileLine" EntityType="Self.FileLine" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="FileSource" EntityType="Self.FileSource" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ILHAudit" EntityType="Self.ILHAudit" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Log" EntityType="Self.Log" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="LogType" EntityType="Self.LogType" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Process" EntityType="Self.Process" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ProcessRun" EntityType="Self.ProcessRun" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Setting" EntityType="Self.Setting" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="User" EntityType="Self.User" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="vwILHConsolidation" EntityType="Self.vwILHConsolidation" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [vwILHConsolidation].[ProcessId] AS [ProcessId], 
+    [vwILHConsolidation].[Name] AS [Name], 
+    [vwILHConsolidation].[Start] AS [Start], 
+    [vwILHConsolidation].[End] AS [End], 
+    [vwILHConsolidation].[FileCount] AS [FileCount], 
+    [vwILHConsolidation].[ActiveDealerCount] AS [ActiveDealerCount]
+    FROM [dbo].[vwILHConsolidation] AS [vwILHConsolidation]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="vwProcessRunConsolidation" EntityType="Self.vwProcessRunConsolidation" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [vwProcessRunConsolidation].[Name] AS [Name], 
+    [vwProcessRunConsolidation].[Start] AS [Start], 
+    [vwProcessRunConsolidation].[End] AS [End], 
+    [vwProcessRunConsolidation].[RunStatus] AS [RunStatus], 
+    [vwProcessRunConsolidation].[FileSourceCount] AS [FileSourceCount], 
+    [vwProcessRunConsolidation].[FileDestinationCount] AS [FileDestinationCount], 
+    [vwProcessRunConsolidation].[ActiveDealerCount] AS [ActiveDealerCount], 
+    [vwProcessRunConsolidation].[ProcessRunId] AS [ProcessRunId], 
+    [vwProcessRunConsolidation].[ProcessId] AS [ProcessId]
+    FROM [dbo].[vwProcessRunConsolidation] AS [vwProcessRunConsolidation]</DefiningQuery>
+          </EntitySet>
+          <AssociationSet Name="FK_Dealer_DealerGroup" Association="Self.FK_Dealer_DealerGroup">
+            <End Role="DealerGroup" EntitySet="DealerGroup" />
+            <End Role="Dealer" EntitySet="Dealer" />
+          </AssociationSet>
+          <AssociationSet Name="FK_DealerGroup_DealerGroup" Association="Self.FK_DealerGroup_DealerGroup">
+            <End Role="DmsProvider" EntitySet="DmsProvider" />
+            <End Role="DealerGroup" EntitySet="DealerGroup" />
+          </AssociationSet>
+          <AssociationSet Name="FK_File_ProcessRun" Association="Self.FK_File_ProcessRun">
+            <End Role="ProcessRun" EntitySet="ProcessRun" />
+            <End Role="FileSource" EntitySet="FileSource" />
+          </AssociationSet>
+          <AssociationSet Name="FK_FileDestination_FileDestination" Association="Self.FK_FileDestination_FileDestination">
+            <End Role="FileDestination" EntitySet="FileDestination" />
+            <End Role="FileDestination1" EntitySet="FileDestination" />
+          </AssociationSet>
+          <AssociationSet Name="FK_FileDestination_ProcessRun" Association="Self.FK_FileDestination_ProcessRun">
+            <End Role="ProcessRun" EntitySet="ProcessRun" />
+            <End Role="FileDestination" EntitySet="FileDestination" />
+          </AssociationSet>
+          <AssociationSet Name="FK_FileLine_FileDestination" Association="Self.FK_FileLine_FileDestination">
+            <End Role="FileDestination" EntitySet="FileDestination" />
+            <End Role="FileLine" EntitySet="FileLine" />
+          </AssociationSet>
+          <AssociationSet Name="FK_FileLine_FileSource" Association="Self.FK_FileLine_FileSource">
+            <End Role="FileSource" EntitySet="FileSource" />
+            <End Role="FileLine" EntitySet="FileLine" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Log_LogType" Association="Self.FK_Log_LogType">
+            <End Role="LogType" EntitySet="LogType" />
+            <End Role="Log" EntitySet="Log" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Log_ProcessRun" Association="Self.FK_Log_ProcessRun">
+            <End Role="ProcessRun" EntitySet="ProcessRun" />
+            <End Role="Log" EntitySet="Log" />
+          </AssociationSet>
+          <AssociationSet Name="FK_LogType_LogType" Association="Self.FK_LogType_LogType">
+            <End Role="LogType" EntitySet="LogType" />
+            <End Role="LogType1" EntitySet="LogType" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ProcessRun_Process" Association="Self.FK_ProcessRun_Process">
+            <End Role="Process" EntitySet="Process" />
+            <End Role="ProcessRun" EntitySet="ProcessRun" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ProcessRun_ProcessRun" Association="Self.FK_ProcessRun_ProcessRun">
+            <End Role="ProcessRun" EntitySet="ProcessRun" />
+            <End Role="ProcessRun1" EntitySet="ProcessRun" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Setting_Setting" Association="Self.FK_Setting_Setting">
+            <End Role="Process" EntitySet="Process" />
+            <End Role="Setting" EntitySet="Setting" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="AutoPartModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityContainer Name="AutoPartEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Dealers" EntityType="AutoPartModel.Dealer" />
+          <EntitySet Name="DealerGroups" EntityType="AutoPartModel.DealerGroup" />
+          <EntitySet Name="DmsProviders" EntityType="AutoPartModel.DmsProvider" />
+          <EntitySet Name="FileDestinations" EntityType="AutoPartModel.FileDestination" />
+          <EntitySet Name="FileLines" EntityType="AutoPartModel.FileLine" />
+          <EntitySet Name="FileSources" EntityType="AutoPartModel.FileSource" />
+          <EntitySet Name="ILHAudits" EntityType="AutoPartModel.ILHAudit" />
+          <EntitySet Name="Logs" EntityType="AutoPartModel.Log" />
+          <EntitySet Name="LogTypes" EntityType="AutoPartModel.LogType" />
+          <EntitySet Name="Processes" EntityType="AutoPartModel.Process" />
+          <EntitySet Name="ProcessRuns" EntityType="AutoPartModel.ProcessRun" />
+          <EntitySet Name="Settings" EntityType="AutoPartModel.Setting" />
+          <EntitySet Name="Users" EntityType="AutoPartModel.User" />
+          <EntitySet Name="vwProcessRunConsolidations" EntityType="AutoPartModel.vwProcessRunConsolidation" />
+          <AssociationSet Name="FK_Dealer_DealerGroup" Association="AutoPartModel.FK_Dealer_DealerGroup">
+            <End Role="DealerGroup" EntitySet="DealerGroups" />
+            <End Role="Dealer" EntitySet="Dealers" />
+          </AssociationSet>
+          <AssociationSet Name="FK_DealerGroup_DealerGroup" Association="AutoPartModel.FK_DealerGroup_DealerGroup">
+            <End Role="DmsProvider" EntitySet="DmsProviders" />
+            <End Role="DealerGroup" EntitySet="DealerGroups" />
+          </AssociationSet>
+          <AssociationSet Name="FK_FileDestination_FileDestination" Association="AutoPartModel.FK_FileDestination_FileDestination">
+            <End Role="FileDestination" EntitySet="FileDestinations" />
+            <End Role="FileDestination1" EntitySet="FileDestinations" />
+          </AssociationSet>
+          <AssociationSet Name="FK_FileDestination_ProcessRun" Association="AutoPartModel.FK_FileDestination_ProcessRun">
+            <End Role="ProcessRun" EntitySet="ProcessRuns" />
+            <End Role="FileDestination" EntitySet="FileDestinations" />
+          </AssociationSet>
+          <AssociationSet Name="FK_FileLine_FileDestination" Association="AutoPartModel.FK_FileLine_FileDestination">
+            <End Role="FileDestination" EntitySet="FileDestinations" />
+            <End Role="FileLine" EntitySet="FileLines" />
+          </AssociationSet>
+          <AssociationSet Name="FK_FileLine_FileSource" Association="AutoPartModel.FK_FileLine_FileSource">
+            <End Role="FileSource" EntitySet="FileSources" />
+            <End Role="FileLine" EntitySet="FileLines" />
+          </AssociationSet>
+          <AssociationSet Name="FK_File_ProcessRun" Association="AutoPartModel.FK_File_ProcessRun">
+            <End Role="ProcessRun" EntitySet="ProcessRuns" />
+            <End Role="FileSource" EntitySet="FileSources" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Log_LogType" Association="AutoPartModel.FK_Log_LogType">
+            <End Role="LogType" EntitySet="LogTypes" />
+            <End Role="Log" EntitySet="Logs" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Log_ProcessRun" Association="AutoPartModel.FK_Log_ProcessRun">
+            <End Role="ProcessRun" EntitySet="ProcessRuns" />
+            <End Role="Log" EntitySet="Logs" />
+          </AssociationSet>
+          <AssociationSet Name="FK_LogType_LogType" Association="AutoPartModel.FK_LogType_LogType">
+            <End Role="LogType" EntitySet="LogTypes" />
+            <End Role="LogType1" EntitySet="LogTypes" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ProcessRun_Process" Association="AutoPartModel.FK_ProcessRun_Process">
+            <End Role="Process" EntitySet="Processes" />
+            <End Role="ProcessRun" EntitySet="ProcessRuns" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Setting_Setting" Association="AutoPartModel.FK_Setting_Setting">
+            <End Role="Process" EntitySet="Processes" />
+            <End Role="Setting" EntitySet="Settings" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ProcessRun_ProcessRun" Association="AutoPartModel.FK_ProcessRun_ProcessRun">
+            <End Role="ProcessRun" EntitySet="ProcessRuns" />
+            <End Role="ProcessRun1" EntitySet="ProcessRuns" />
+          </AssociationSet>
+          <EntitySet Name="vwILHConsolidations" EntityType="AutoPartModel.vwILHConsolidation" />
+        </EntityContainer>
+        <EntityType Name="Dealer">
+          <Key>
+            <PropertyRef Name="DealerId" />
+          </Key>
+          <Property Name="DealerId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="DealerGroupId" Type="Int32" Nullable="false" />
+          <Property Name="Code" Type="String" Nullable="false" MaxLength="5" FixedLength="false" Unicode="false" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="IsActive" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="DealerGroup" Relationship="AutoPartModel.FK_Dealer_DealerGroup" FromRole="Dealer" ToRole="DealerGroup" />
+        </EntityType>
+        <EntityType Name="DealerGroup">
+          <Key>
+            <PropertyRef Name="DealerGroupId" />
+          </Key>
+          <Property Name="DealerGroupId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="DmsProviderId" Type="Int32" Nullable="false" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Code" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Dealers" Relationship="AutoPartModel.FK_Dealer_DealerGroup" FromRole="DealerGroup" ToRole="Dealer" />
+          <NavigationProperty Name="DmsProvider" Relationship="AutoPartModel.FK_DealerGroup_DealerGroup" FromRole="DealerGroup" ToRole="DmsProvider" />
+        </EntityType>
+        <EntityType Name="DmsProvider">
+          <Key>
+            <PropertyRef Name="DmsProviderId" />
+          </Key>
+          <Property Name="DmsProviderId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="DealerGroups" Relationship="AutoPartModel.FK_DealerGroup_DealerGroup" FromRole="DmsProvider" ToRole="DealerGroup" />
+        </EntityType>
+        <EntityType Name="FileDestination">
+          <Key>
+            <PropertyRef Name="FileId" />
+          </Key>
+          <Property Name="FileId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ProcessRunId" Type="Int32" Nullable="false" />
+          <Property Name="Path" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="FileDestination1" Relationship="AutoPartModel.FK_FileDestination_FileDestination" FromRole="FileDestination" ToRole="FileDestination1" />
+          <NavigationProperty Name="FileDestination2" Relationship="AutoPartModel.FK_FileDestination_FileDestination" FromRole="FileDestination1" ToRole="FileDestination" />
+          <NavigationProperty Name="ProcessRun" Relationship="AutoPartModel.FK_FileDestination_ProcessRun" FromRole="FileDestination" ToRole="ProcessRun" />
+          <NavigationProperty Name="FileLines" Relationship="AutoPartModel.FK_FileLine_FileDestination" FromRole="FileDestination" ToRole="FileLine" />
+        </EntityType>
+        <EntityType Name="FileLine">
+          <Key>
+            <PropertyRef Name="FileLineId" />
+          </Key>
+          <Property Name="FileLineId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="FileSourceId" Type="Int32" Nullable="false" />
+          <Property Name="FileDestinationId" Type="Int32" />
+          <Property Name="Line" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="CreateDate" Type="DateTime" Nullable="false" Precision="3" />
+          <NavigationProperty Name="FileDestination" Relationship="AutoPartModel.FK_FileLine_FileDestination" FromRole="FileLine" ToRole="FileDestination" />
+          <NavigationProperty Name="FileSource" Relationship="AutoPartModel.FK_FileLine_FileSource" FromRole="FileLine" ToRole="FileSource" />
+        </EntityType>
+        <EntityType Name="FileSource">
+          <Key>
+            <PropertyRef Name="FileId" />
+          </Key>
+          <Property Name="FileId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ProcessRunId" Type="Int32" Nullable="false" />
+          <Property Name="Path" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="FileLines" Relationship="AutoPartModel.FK_FileLine_FileSource" FromRole="FileSource" ToRole="FileLine" />
+          <NavigationProperty Name="ProcessRun" Relationship="AutoPartModel.FK_File_ProcessRun" FromRole="FileSource" ToRole="ProcessRun" />
+        </EntityType>
+        <EntityType Name="ILHAudit">
+          <Key>
+            <PropertyRef Name="ILHAuditId" />
+          </Key>
+          <Property Name="ILHAuditId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ProcessRunId" Type="Int32" Nullable="false" />
+          <Property Name="DealerId" Type="Int32" Nullable="false" />
+          <Property Name="Source" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="Destination" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="Timestamp" Type="DateTime" Nullable="false" Precision="3" />
+        </EntityType>
+        <EntityType Name="Log">
+          <Key>
+            <PropertyRef Name="LogID" />
+          </Key>
+          <Property Name="LogID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="LogTypeID" Type="Int32" Nullable="false" />
+          <Property Name="ProcessRunID" Type="Int32" Nullable="false" />
+          <Property Name="Source" Type="String" MaxLength="1000" FixedLength="false" Unicode="false" />
+          <Property Name="Message" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="StackTrace" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="LogDate" Type="DateTime" Nullable="false" Precision="3" />
+          <NavigationProperty Name="LogType" Relationship="AutoPartModel.FK_Log_LogType" FromRole="Log" ToRole="LogType" />
+          <NavigationProperty Name="ProcessRun" Relationship="AutoPartModel.FK_Log_ProcessRun" FromRole="Log" ToRole="ProcessRun" />
+        </EntityType>
+        <EntityType Name="LogType">
+          <Key>
+            <PropertyRef Name="LogTypeID" />
+          </Key>
+          <Property Name="LogTypeID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="LogType1" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Logs" Relationship="AutoPartModel.FK_Log_LogType" FromRole="LogType" ToRole="Log" />
+          <NavigationProperty Name="LogType11" Relationship="AutoPartModel.FK_LogType_LogType" FromRole="LogType" ToRole="LogType1" />
+          <NavigationProperty Name="LogType2" Relationship="AutoPartModel.FK_LogType_LogType" FromRole="LogType1" ToRole="LogType" />
+        </EntityType>
+        <EntityType Name="Process">
+          <Key>
+            <PropertyRef Name="ProcessId" />
+          </Key>
+          <Property Name="ProcessId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="ProcessRuns" Relationship="AutoPartModel.FK_ProcessRun_Process" FromRole="Process" ToRole="ProcessRun" />
+          <NavigationProperty Name="Settings" Relationship="AutoPartModel.FK_Setting_Setting" FromRole="Process" ToRole="Setting" />
+        </EntityType>
+        <EntityType Name="ProcessRun">
+          <Key>
+            <PropertyRef Name="ProcessRunId" />
+          </Key>
+          <Property Name="ProcessRunId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ProcessId" Type="Int32" Nullable="false" />
+          <Property Name="Start" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="End" Type="DateTime" Precision="3" />
+          <Property Name="RunStatus" Type="Boolean" />
+          <NavigationProperty Name="FileDestinations" Relationship="AutoPartModel.FK_FileDestination_ProcessRun" FromRole="ProcessRun" ToRole="FileDestination" />
+          <NavigationProperty Name="FileSources" Relationship="AutoPartModel.FK_File_ProcessRun" FromRole="ProcessRun" ToRole="FileSource" />
+          <NavigationProperty Name="Logs" Relationship="AutoPartModel.FK_Log_ProcessRun" FromRole="ProcessRun" ToRole="Log" />
+          <NavigationProperty Name="Process" Relationship="AutoPartModel.FK_ProcessRun_Process" FromRole="ProcessRun" ToRole="Process" />
+          <NavigationProperty Name="ProcessRun1" Relationship="AutoPartModel.FK_ProcessRun_ProcessRun" FromRole="ProcessRun" ToRole="ProcessRun1" />
+          <NavigationProperty Name="ProcessRun2" Relationship="AutoPartModel.FK_ProcessRun_ProcessRun" FromRole="ProcessRun1" ToRole="ProcessRun" />
+        </EntityType>
+        <EntityType Name="Setting">
+          <Key>
+            <PropertyRef Name="SettingId" />
+          </Key>
+          <Property Name="SettingId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ProcessId" Type="Int32" Nullable="false" />
+          <Property Name="Key" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Value" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Process" Relationship="AutoPartModel.FK_Setting_Setting" FromRole="Setting" ToRole="Process" />
+        </EntityType>
+        <EntityType Name="User">
+          <Key>
+            <PropertyRef Name="UserId" />
+          </Key>
+          <Property Name="UserId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Username" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Domain" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="vwProcessRunConsolidation">
+          <Key>
+            <PropertyRef Name="Name" />
+            <PropertyRef Name="Start" />
+            <PropertyRef Name="ProcessRunId" />
+            <PropertyRef Name="ProcessId" />
+          </Key>
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Start" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="End" Type="DateTime" Precision="3" />
+          <Property Name="RunStatus" Type="Boolean" />
+          <Property Name="FileSourceCount" Type="Int32" />
+          <Property Name="FileDestinationCount" Type="Int32" />
+          <Property Name="ActiveDealerCount" Type="Int32" />
+          <Property Name="ProcessRunId" Type="Int32" Nullable="false" />
+          <Property Name="ProcessId" Type="Int32" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_Dealer_DealerGroup">
+          <End Type="AutoPartModel.DealerGroup" Role="DealerGroup" Multiplicity="1" />
+          <End Type="AutoPartModel.Dealer" Role="Dealer" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="DealerGroup">
+              <PropertyRef Name="DealerGroupId" />
+            </Principal>
+            <Dependent Role="Dealer">
+              <PropertyRef Name="DealerGroupId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_DealerGroup_DealerGroup">
+          <End Type="AutoPartModel.DmsProvider" Role="DmsProvider" Multiplicity="1" />
+          <End Type="AutoPartModel.DealerGroup" Role="DealerGroup" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="DmsProvider">
+              <PropertyRef Name="DmsProviderId" />
+            </Principal>
+            <Dependent Role="DealerGroup">
+              <PropertyRef Name="DmsProviderId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_FileDestination_FileDestination">
+          <End Type="AutoPartModel.FileDestination" Role="FileDestination" Multiplicity="1" />
+          <End Type="AutoPartModel.FileDestination" Role="FileDestination1" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="FileDestination">
+              <PropertyRef Name="FileId" />
+            </Principal>
+            <Dependent Role="FileDestination1">
+              <PropertyRef Name="FileId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_FileDestination_ProcessRun">
+          <End Type="AutoPartModel.ProcessRun" Role="ProcessRun" Multiplicity="1" />
+          <End Type="AutoPartModel.FileDestination" Role="FileDestination" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProcessRun">
+              <PropertyRef Name="ProcessRunId" />
+            </Principal>
+            <Dependent Role="FileDestination">
+              <PropertyRef Name="ProcessRunId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_FileLine_FileDestination">
+          <End Type="AutoPartModel.FileDestination" Role="FileDestination" Multiplicity="0..1" />
+          <End Type="AutoPartModel.FileLine" Role="FileLine" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="FileDestination">
+              <PropertyRef Name="FileId" />
+            </Principal>
+            <Dependent Role="FileLine">
+              <PropertyRef Name="FileDestinationId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_FileLine_FileSource">
+          <End Type="AutoPartModel.FileSource" Role="FileSource" Multiplicity="1" />
+          <End Type="AutoPartModel.FileLine" Role="FileLine" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="FileSource">
+              <PropertyRef Name="FileId" />
+            </Principal>
+            <Dependent Role="FileLine">
+              <PropertyRef Name="FileSourceId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_File_ProcessRun">
+          <End Type="AutoPartModel.ProcessRun" Role="ProcessRun" Multiplicity="1" />
+          <End Type="AutoPartModel.FileSource" Role="FileSource" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProcessRun">
+              <PropertyRef Name="ProcessRunId" />
+            </Principal>
+            <Dependent Role="FileSource">
+              <PropertyRef Name="ProcessRunId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Log_LogType">
+          <End Type="AutoPartModel.LogType" Role="LogType" Multiplicity="1" />
+          <End Type="AutoPartModel.Log" Role="Log" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="LogType">
+              <PropertyRef Name="LogTypeID" />
+            </Principal>
+            <Dependent Role="Log">
+              <PropertyRef Name="LogTypeID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Log_ProcessRun">
+          <End Type="AutoPartModel.ProcessRun" Role="ProcessRun" Multiplicity="1" />
+          <End Type="AutoPartModel.Log" Role="Log" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProcessRun">
+              <PropertyRef Name="ProcessRunId" />
+            </Principal>
+            <Dependent Role="Log">
+              <PropertyRef Name="ProcessRunID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_LogType_LogType">
+          <End Type="AutoPartModel.LogType" Role="LogType" Multiplicity="1" />
+          <End Type="AutoPartModel.LogType" Role="LogType1" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="LogType">
+              <PropertyRef Name="LogTypeID" />
+            </Principal>
+            <Dependent Role="LogType1">
+              <PropertyRef Name="LogTypeID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ProcessRun_Process">
+          <End Type="AutoPartModel.Process" Role="Process" Multiplicity="1" />
+          <End Type="AutoPartModel.ProcessRun" Role="ProcessRun" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Process">
+              <PropertyRef Name="ProcessId" />
+            </Principal>
+            <Dependent Role="ProcessRun">
+              <PropertyRef Name="ProcessId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Setting_Setting">
+          <End Type="AutoPartModel.Process" Role="Process" Multiplicity="1" />
+          <End Type="AutoPartModel.Setting" Role="Setting" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Process">
+              <PropertyRef Name="ProcessId" />
+            </Principal>
+            <Dependent Role="Setting">
+              <PropertyRef Name="ProcessId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ProcessRun_ProcessRun">
+          <End Type="AutoPartModel.ProcessRun" Role="ProcessRun" Multiplicity="1" />
+          <End Type="AutoPartModel.ProcessRun" Role="ProcessRun1" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="ProcessRun">
+              <PropertyRef Name="ProcessRunId" />
+            </Principal>
+            <Dependent Role="ProcessRun1">
+              <PropertyRef Name="ProcessRunId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="vwILHConsolidation">
+          <Key>
+            <PropertyRef Name="ProcessId" />
+            <PropertyRef Name="Name" />
+            <PropertyRef Name="Start" />
+          </Key>
+          <Property Name="ProcessId" Type="Int32" Nullable="false" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Start" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="End" Type="DateTime" Precision="3" />
+          <Property Name="FileCount" Type="Int32" />
+          <Property Name="ActiveDealerCount" Type="Int32" />
+        </EntityType>
+        </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="AutoPartModelStoreContainer" CdmEntityContainer="AutoPartEntities">
+          <EntitySetMapping Name="Dealers">
+            <EntityTypeMapping TypeName="AutoPartModel.Dealer">
+              <MappingFragment StoreEntitySet="Dealer">
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="DealerGroupId" ColumnName="DealerGroupId" />
+                <ScalarProperty Name="DealerId" ColumnName="DealerId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="DealerGroups">
+            <EntityTypeMapping TypeName="AutoPartModel.DealerGroup">
+              <MappingFragment StoreEntitySet="DealerGroup">
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="DmsProviderId" ColumnName="DmsProviderId" />
+                <ScalarProperty Name="DealerGroupId" ColumnName="DealerGroupId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="DmsProviders">
+            <EntityTypeMapping TypeName="AutoPartModel.DmsProvider">
+              <MappingFragment StoreEntitySet="DmsProvider">
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="DmsProviderId" ColumnName="DmsProviderId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="FileDestinations">
+            <EntityTypeMapping TypeName="AutoPartModel.FileDestination">
+              <MappingFragment StoreEntitySet="FileDestination">
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Path" ColumnName="Path" />
+                <ScalarProperty Name="ProcessRunId" ColumnName="ProcessRunId" />
+                <ScalarProperty Name="FileId" ColumnName="FileId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="FileLines">
+            <EntityTypeMapping TypeName="AutoPartModel.FileLine">
+              <MappingFragment StoreEntitySet="FileLine">
+                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+                <ScalarProperty Name="Line" ColumnName="Line" />
+                <ScalarProperty Name="FileDestinationId" ColumnName="FileDestinationId" />
+                <ScalarProperty Name="FileSourceId" ColumnName="FileSourceId" />
+                <ScalarProperty Name="FileLineId" ColumnName="FileLineId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="FileSources">
+            <EntityTypeMapping TypeName="AutoPartModel.FileSource">
+              <MappingFragment StoreEntitySet="FileSource">
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Path" ColumnName="Path" />
+                <ScalarProperty Name="ProcessRunId" ColumnName="ProcessRunId" />
+                <ScalarProperty Name="FileId" ColumnName="FileId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ILHAudits">
+            <EntityTypeMapping TypeName="AutoPartModel.ILHAudit">
+              <MappingFragment StoreEntitySet="ILHAudit">
+                <ScalarProperty Name="Timestamp" ColumnName="Timestamp" />
+                <ScalarProperty Name="Destination" ColumnName="Destination" />
+                <ScalarProperty Name="Source" ColumnName="Source" />
+                <ScalarProperty Name="DealerId" ColumnName="DealerId" />
+                <ScalarProperty Name="ProcessRunId" ColumnName="ProcessRunId" />
+                <ScalarProperty Name="ILHAuditId" ColumnName="ILHAuditId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Logs">
+            <EntityTypeMapping TypeName="AutoPartModel.Log">
+              <MappingFragment StoreEntitySet="Log">
+                <ScalarProperty Name="LogDate" ColumnName="LogDate" />
+                <ScalarProperty Name="StackTrace" ColumnName="StackTrace" />
+                <ScalarProperty Name="Message" ColumnName="Message" />
+                <ScalarProperty Name="Source" ColumnName="Source" />
+                <ScalarProperty Name="ProcessRunID" ColumnName="ProcessRunID" />
+                <ScalarProperty Name="LogTypeID" ColumnName="LogTypeID" />
+                <ScalarProperty Name="LogID" ColumnName="LogID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="LogTypes">
+            <EntityTypeMapping TypeName="AutoPartModel.LogType">
+              <MappingFragment StoreEntitySet="LogType">
+                <ScalarProperty Name="LogType1" ColumnName="LogType" />
+                <ScalarProperty Name="LogTypeID" ColumnName="LogTypeID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Processes">
+            <EntityTypeMapping TypeName="AutoPartModel.Process">
+              <MappingFragment StoreEntitySet="Process">
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="ProcessId" ColumnName="ProcessId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ProcessRuns">
+            <EntityTypeMapping TypeName="AutoPartModel.ProcessRun">
+              <MappingFragment StoreEntitySet="ProcessRun">
+                <ScalarProperty Name="RunStatus" ColumnName="RunStatus" />
+                <ScalarProperty Name="End" ColumnName="End" />
+                <ScalarProperty Name="Start" ColumnName="Start" />
+                <ScalarProperty Name="ProcessId" ColumnName="ProcessId" />
+                <ScalarProperty Name="ProcessRunId" ColumnName="ProcessRunId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Settings">
+            <EntityTypeMapping TypeName="AutoPartModel.Setting">
+              <MappingFragment StoreEntitySet="Setting">
+                <ScalarProperty Name="Value" ColumnName="Value" />
+                <ScalarProperty Name="Key" ColumnName="Key" />
+                <ScalarProperty Name="ProcessId" ColumnName="ProcessId" />
+                <ScalarProperty Name="SettingId" ColumnName="SettingId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Users">
+            <EntityTypeMapping TypeName="AutoPartModel.User">
+              <MappingFragment StoreEntitySet="User">
+                <ScalarProperty Name="Domain" ColumnName="Domain" />
+                <ScalarProperty Name="Username" ColumnName="Username" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="vwProcessRunConsolidations">
+            <EntityTypeMapping TypeName="AutoPartModel.vwProcessRunConsolidation">
+              <MappingFragment StoreEntitySet="vwProcessRunConsolidation">
+                <ScalarProperty Name="ProcessId" ColumnName="ProcessId" />
+                <ScalarProperty Name="ProcessRunId" ColumnName="ProcessRunId" />
+                <ScalarProperty Name="ActiveDealerCount" ColumnName="ActiveDealerCount" />
+                <ScalarProperty Name="FileDestinationCount" ColumnName="FileDestinationCount" />
+                <ScalarProperty Name="FileSourceCount" ColumnName="FileSourceCount" />
+                <ScalarProperty Name="RunStatus" ColumnName="RunStatus" />
+                <ScalarProperty Name="End" ColumnName="End" />
+                <ScalarProperty Name="Start" ColumnName="Start" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="vwILHConsolidations">
+            <EntityTypeMapping TypeName="AutoPartModel.vwILHConsolidation">
+              <MappingFragment StoreEntitySet="vwILHConsolidation">
+                <ScalarProperty Name="ActiveDealerCount" ColumnName="ActiveDealerCount" />
+                <ScalarProperty Name="FileCount" ColumnName="FileCount" />
+                <ScalarProperty Name="End" ColumnName="End" />
+                <ScalarProperty Name="Start" ColumnName="Start" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="ProcessId" ColumnName="ProcessId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="True" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

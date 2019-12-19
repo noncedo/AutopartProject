@@ -1,0 +1,156 @@
+﻿@model List<DataAccess.DmsProvider>
+
+@{
+    ViewBag.Title = "Dms Providers";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>DMS Providers</h2>
+
+
+<div class=" table-responsive">
+    <table class="table table-striped table-hover table-bordered" id="table">
+        <thead>
+        <tr>
+            <th>DMS Provider Name</th>
+            <th></th>
+            <th></th>
+            
+        </tr>
+        </thead>
+        <tbody>
+        @for(int i=0; i < Model.Count; i++)
+        {
+            <tr class=@(Model[i].DmsProviderId + "_" + i)>
+               
+                <td class=@("name_" + i )>@Model[i].Name</td>
+
+                <td><input id=@("editBtn_" + i) type="button" value="Edit" onclick="Edit('@Model[i].DmsProviderId', @i, '@Model[i].Name')" class="btn btn-info" /></td>
+             
+                <td><input type="button" value="Delete" class="btn btn-danger" onclick="Delete(@Model[i].DmsProviderId)"/> </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>
+
+
+
+<script>
+
+    function Edit(id,index,name) {
+
+        alert(index);
+
+        var dmsId = id;
+
+        var btnText = $('#editBtn_' + index).val();
+
+        dmsId = dmsId + '_' + index;
+        
+
+        if (btnText == 'Edit')
+        {
+            $('#editBtn_' + index).val('Save');
+
+            $('.' + dmsId + ' td.name_' + index).empty();
+            $('.' + dmsId + ' td.name_' + index).html('<input id="txtName_' + index + '"  type="text" value="' + name + '" class="form-control" />');
+
+            //$('.' + dmsId + ' td.domain_' + index).empty();
+            //$('.' + dmsId + ' td.domain_' + index).html('<input id="txtDomain_' + index + '"  type="text" value="' + domain + '" class="form-control" />');
+
+        }
+        else {
+            $('#editBtn_' + index).val('Edit');
+
+            var myObj =
+            {
+                dmsid:id,
+                name: $('#txtName_' + index).val()
+                //domain: $('#txtDomain_' + index).val(),
+
+            }
+            $.post('@Url.Action("UpdateDMS", "DmsProvider")', myObj, function (result) {
+                if (result.success == true) {
+                    alert('Updated!');
+                    location.reload();
+
+                }
+                else
+                    alert("error occured")
+            });
+        }
+    }
+
+    function Delete(id) {
+        $.post('@Url.Action("Delete", "DmsProvider")', { id: id }, function (result) {
+            if (result.success == true) {
+                alert("Are you sure you wanna delete?");
+                location.reload();
+            }
+            else
+                alert("error occured")
+        })
+    }
+
+</script>
+
+
+
+@*@(Html.Kendo().Grid<DataAccess.DmsProvider>()
+                    .Name("grid")
+                    .Columns(columns =>
+                    {
+                        columns.Bound(e => e.Name);
+
+                        columns.Command(command => { command.Edit(); command.Destroy(); }).Width(250);
+                    })
+                    .ToolBar(toolbar => toolbar.Create())
+                    .Editable(editable => editable.Mode(GridEditMode.InLine).ConfirmDelete("Confirmation").DisplayDeleteConfirmation("Test"))
+                    .DataSource(dataSource => dataSource
+                        .Custom()
+                        .Type("odata-v4")
+                        .Schema(schema => schema
+                        .Model(m =>
+                        {
+                            m.Id(t => t.DmsProviderId);
+                            m.Field(t => t.Name).Editable(false);
+                        }))
+                        .Transport(t =>
+                        {
+                            t.Read(new { url = new Kendo.Mvc.ClientHandlerDescriptor() { HandlerName = "read" } });
+                            t.Update(new { url = new Kendo.Mvc.ClientHandlerDescriptor() { HandlerName = "update" } });
+                            t.Create(new { url = new Kendo.Mvc.ClientHandlerDescriptor() { HandlerName = "create" } });
+                            t.Destroy(new { url = new Kendo.Mvc.ClientHandlerDescriptor() { HandlerName = "destroy" } });
+                        }
+                        )
+                        .PageSize(20)
+                        .ServerPaging(true)
+                        .ServerSorting(true)
+                        .ServerFiltering(true)
+                    )
+                    .Pageable(pageable => pageable
+                        .Refresh(true)
+                        .PageSizes(true)
+                        .ButtonCount(5))
+                    .Sortable()
+                    .Filterable()
+
+)
+
+<script>
+        function read() {
+            return "odata/DmsProviders";
+        }
+        function update(dataItem) {
+            return "odata/DmsProviders(" + dataItem.DealerId + ")";
+        }
+        function create(dataItem) {
+            delete dataItem.ProductID;
+            return "odata/DmsProviders";
+        }
+        function destroy(dataItem) {
+            return "odata/DmsProviders(" + dataItem.DealerId + ")";
+        }
+</script>*@
+

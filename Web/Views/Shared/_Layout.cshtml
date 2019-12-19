@@ -1,0 +1,122 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/kendo")
+    @Scripts.Render("~/bundles/bootstrap")
+
+    <link href="~/Content/datatables.css" rel="stylesheet" />
+    <link href="~/Content/dataTables.bootstrap4.min.css" rel="stylesheet" />
+
+</head>
+<body>
+@*<br/>*@
+<div class="nav-color">
+    <img src="~/Content/images/Logo_Volkswagen.png" />
+
+    <div class="btn-group nav-text-color">
+        <div class="btn-group">
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" style="color:gray">
+                Admin
+            </button>
+            <div class="dropdown-menu">
+                <a class="dropdown-item nav-text-color" href="@Url.Action("Index","Dealer")">Dealer</a>
+                <a class="dropdown-item nav-text-color" href="@Url.Action("Index","DealerGroup")">Dealer Group</a>
+                <a class="dropdown-item nav-text-color" href="@Url.Action("Index","DmsProvider")">DMS Providers</a>
+                <a class="dropdown-item nav-text-color" href="@Url.Action("Index","User")">User</a>
+                <a class="dropdown-item nav-text-color" href="@Url.Action("Index","Setting")">Settings</a>
+            </div>
+            <div class="btn-group nav-text-color">
+                <button type="button" class="btn btn-default dropdown-toggle nav-text-color" data-toggle="dropdown">
+                    Reporting
+                </button>
+                <div class="dropdown-menu nav-text-color">
+                    <a class="dropdown-item" href="@Url.Action("Index","Process")">Process</a>
+                </div>
+            
+            </div>
+            <span style="float: right">@ViewData["User"].ToString()</span>
+        </div>
+          
+    </div>  
+</div>
+
+@*<br/>
+@(Html.Kendo().Menu()
+              .Name("Menu")
+              .Items(items =>
+              {
+                  items.Add().ImageUrl(Url.Content("~/Content/images/Logo_Volkswagen.png"));
+
+                  items.Add().Text("Admin").Items
+                      (
+                          children => children.Add().Text("Dealer").Action("Index", "Dealer")
+                      )
+                      .Items
+                      (
+                          children => children.Add().Text("Dealer Group").Action("Index", "DealerGroup")
+                      )
+                      .Items
+                      (
+                          children => children.Add().Text("DMS Providers").Action("Index", "DmsProvider")
+                      )
+                      .Items
+                      (
+                          children => children.Add().Text("User").Action("Index", "User")
+                      )
+                      .Items
+                      (
+                          children => children.Add().Text("Settings").Action("Index", "Setting")
+                      );
+                  items.Add().Text((string)ViewData["User"]).HtmlAttributes(new
+                  {
+                      @class = "username"
+                  });
+
+                  items.Add().Text("Reporting")
+                      .Items
+                      (
+                          children => children.Add().Text("Process").Action("Index", "Process")
+                      );
+
+
+              })
+    )*@
+
+
+<div class="container-fluid">
+    <div class="row">
+        @*<div class="col-md-1"></div>*@
+        <div class="col-md-12">@RenderBody()</div>
+        @*<div class="col-md-1"></div>*@
+    </div>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+
+
+<script src="~/Scripts/dataTables.bootstrap4.js"></script>
+    <script src="~/Scripts/datatables.js"></script>
+    <script src="~/Scripts/jquery.tabledit.js"></script>
+<script src="~/Scripts/jquery.tabledit.min.js"></script>
+
+
+    <script type="text/javascript">
+        $(function () {
+            //declare all the tables here
+            var table = $('#table');
+            table.DataTable({});
+
+        });
+    </script>
+
+
+</body>
+</html>

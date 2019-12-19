@@ -1,0 +1,91 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+
+
+
+<br />
+<h3>Processes</h3>
+<br />
+
+@(Html.Kendo().Grid<DataAccess.Process>()
+                    .Name("grid")
+                    .Columns(columns =>
+                    {
+                        columns.Bound(e => e.Name);
+                        columns.Bound(e => e.ProcessId);
+                        columns.Bound(c => c.ProcessId).ClientTemplate(Html.ActionLink("View Process Runs","Index", "ProcessRun", new { ProcessId = "id" }, new { @class = "k-button k-button-icontext" })
+                            .ToHtmlString().Replace("id", "#=ProcessId#")).Filterable(false).Sortable(false).Title("").Width(250);
+                        columns.Command(command => { command.Edit(); command.Destroy(); }).Width(250);
+                    })
+                    .Editable(editable => editable.Mode(GridEditMode.InLine).ConfirmDelete("Confirmation").DisplayDeleteConfirmation("Test"))
+                    .DataSource(dataSource => dataSource
+                        .Custom()
+                        .Type("odata-v4")
+                        .Schema(schema => schema
+                        .Model(m =>
+                        {
+                            m.Id(t => t.ProcessId);
+                            m.Field(t => t.ProcessId).Editable(false);
+                            m.Field(t => t.Name);
+                        }))
+                        .Transport(t =>
+                        {
+                            t.Read(new { url = new Kendo.Mvc.ClientHandlerDescriptor() { HandlerName = "read" } });
+                            t.Update(new { url = new Kendo.Mvc.ClientHandlerDescriptor() { HandlerName = "update" } });
+                            t.Create(new { url = new Kendo.Mvc.ClientHandlerDescriptor() { HandlerName = "create" } });
+                            t.Destroy(new { url = new Kendo.Mvc.ClientHandlerDescriptor() { HandlerName = "destroy" } });
+                        }
+                        )
+                        .PageSize(20)
+                        .ServerPaging(true)
+                        .ServerSorting(true)
+                        .ServerFiltering(true)
+                        .ServerGrouping(true)
+                    )
+                    .Pageable(pageable => pageable
+                        .Refresh(true)
+                        .PageSizes(true)
+                        .ButtonCount(5))
+                    .Sortable()
+                    .Filterable()
+)
+
+<script>
+    function read() {
+        var baseUrl = "@Url.Content("~")";
+        return baseUrl + "odata/Processes";
+    }
+    function update(dataItem) {
+        var baseUrl = "@Url.Content("~")";
+        return baseUrl + "odata/Processes(" + dataItem.ProcessId + ")";
+    }
+    function create(dataItem) {
+        delete dataItem.ProductID;
+        var baseUrl = "@Url.Content("~")";
+        return baseUrl + "odata/Processes";
+    }
+    function destroy(dataItem) {
+        var baseUrl = "@Url.Content("~")";
+        return baseUrl + "odata/Processes(" + dataItem.ProcessId + ")";
+    }
+
+    function showDetails(e) {
+        e.preventDefault();
+
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+        var processRunURl = "/ProcessRun/Index?ProcessId=" + dataItem.ProcessId;
+
+        var myObject = { ProcessId: dataItem.ProcessId };
+
+        $.ajax({ //Do an ajax post to the controller
+            type: 'POST',
+            url: '/ProcessRun/Index',
+            data: JSON.stringify(myObject),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json"
+        });
+
+    }
+</script> 

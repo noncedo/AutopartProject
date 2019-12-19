@@ -1,0 +1,16 @@
+﻿.k-button{
+    margin-right:1em;
+}
+
+.k-image{
+    width:4em;
+}
+
+.k-menu {
+    padding: 0 !important;
+}
+.username {
+    position: absolute !important;
+    right: 1em;
+    top: 2.7em;
+}

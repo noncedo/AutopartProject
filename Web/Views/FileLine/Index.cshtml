@@ -1,0 +1,91 @@
+﻿@model List<DataAccess.FileLine>
+@{
+    ViewBag.Title = "Index";
+}
+
+<br />
+<h3>File Line</h3>
+<br />
+
+@foreach (var item in Model)
+{
+    <div class="container">
+        <p> @Html.DisplayFor(modelItem => item.FileSource)</p>
+        <p> @Html.DisplayFor(modelItem => item.CreateDate)</p>
+    </div>
+}
+
+
+
+@*@(Html.Kendo().Grid<DataAccess.FileLine>()
+                                            .Name("grid")
+                                            .Columns(columns =>
+                                            {
+                                                columns.Bound(e => e.Line);
+
+                                                columns.Bound(e => e.CreateDate).Format("{0:dd/MMMM/yyyy hh:mm:ss tt}");
+
+
+                                            })
+                                            .Editable(editable => editable.Mode(GridEditMode.InLine).ConfirmDelete("Confirmation").DisplayDeleteConfirmation("Test"))
+                                            .DataSource(dataSource => dataSource
+                                                .Custom()
+                                                .Type("odata-v4")
+                                                .Schema(schema => schema
+                                                .Model(m =>
+                                                {
+                                                    m.Id(t => t.FileLineId);
+                                                    m.Field(t => t.FileLineId).Editable(false);
+                                                    m.Field(t => t.Line);
+                                                    m.Field(t => t.CreateDate);
+
+
+                                                }))
+                                                .Transport(t =>
+                                                {
+                                                    t.Read(new { url = new Kendo.Mvc.ClientHandlerDescriptor() { HandlerName = "read" } });
+
+                                                }
+                                                )
+                                                .PageSize(20)
+                                                .ServerPaging(true)
+                                                .ServerSorting(true)
+                                                .ServerFiltering(true)
+                                                .ServerGrouping(true)
+                                            )
+                                            .Pageable(pageable => pageable
+                                                .Refresh(true)
+                                                .PageSizes(true)
+                                                .ButtonCount(5))
+                                            .Sortable()
+                                            .Filterable()
+    )*@
+
+@*<script>
+        function read() {
+
+            @if(Model.FileSourceId.HasValue)
+            {
+                <text>
+                    var baseUrl = "@Url.Content("~")";
+                    return baseUrl + "odata/FileLines?$filter=FileSourceId eq " + @Model.FileSourceId;
+                </text>
+            }
+            else if(Model.FileDestinationId.HasValue)
+            {
+                <text>
+                    var baseUrl = "@Url.Content("~")";
+                    return baseUrl + "odata/FileLines?$filter=FileDestinationId eq " + @Model.FileDestinationId;
+                </text>
+            }
+            else
+            {
+                <text>
+                    var baseUrl = "@Url.Content("~")";
+                    return baseUrl + "odata/FileLines";
+                </text>
+            }
+        }
+
+    </script>*@
+

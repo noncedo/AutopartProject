@@ -1,0 +1,168 @@
+﻿@model List<DataAccess.User>
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Users</h2>
+
+
+<br />
+
+<input type="button" class="btn btn-secondary" value="Add New Record" id="btnAdd"  />
+<br />
+<br />
+<div class=" table-responsive">
+    <table class="table table-striped table-hover table-bordered" id="table">
+        <thead>
+        <tr>
+            <th>User Id</th>
+            <th>Username</th>
+            <th>Domain</th>
+            <th></th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        @for(int i=0; i < Model.Count; i++)
+        {
+            <tr class=@(Model[i].UserId + "_" + i)>
+                <td class=@("id_" + i ) >@Model[i].UserId</td>
+                <td class=@("username_" + i )>@Model[i].Username</td>
+                <td class=@("domain_" + i )> @Model[i].Domain</td>
+                
+                <td><input id=@("editBtn_" + i) type="button" value="Edit" onclick="Edit('@Model[i].UserId', @i, '@Model[i].Username','@Model[i].Domain')" class="btn btn-info" />
+                   </td>
+                <td><input type="button" value="Delete" class="btn btn-danger" onclick="Delete(@Model[i].UserId)"/> </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>
+
+<script>
+
+
+    function Edit(id,index,username,domain) {
+
+        var userId = id;
+
+        var btnText = $('#editBtn_' + index).val();
+
+        userId = userId + '_' + index;
+
+        alert(userId);
+
+        if (btnText == 'Edit')
+        {
+            $('#editBtn_' + index).val('Save');
+            
+            $('.' + userId + ' td.username_' + index).empty();
+            $('.' + userId + ' td.username_' + index).html('<input id="txtUserName_' + index + '"  type="text" value="' + username + '" class="form-control" />');
+
+            $('.' + userId + ' td.domain_' + index).empty();
+            $('.' + userId + ' td.domain_' + index).html('<input id="txtDomain_' + index + '"  type="text" value="' + domain + '" class="form-control" />');
+
+        }
+        else {
+            $('#editBtn_' + index).val('Edit');
+
+            var myObj =
+            {
+                userId: id,
+                username: $('#txtUserName_' + index).val(),
+                domain: $('#txtDomain_' + index).val(),
+                
+            }
+            $.post('@Url.Action("UpdateUser", "User")', myObj, function (result) {
+                if (result.success == true) {
+                    alert('Updated!');
+                    location.reload();
+
+                }
+                else
+                    alert("error occured")
+            });
+        }
+    }
+
+    function Delete(id) {
+        $.post('@Url.Action("Delete", "User")', { userId: id }, function (result) {
+            if (result.success == true) {
+                alert("Are you sure you wanna delete?");
+                location.reload();
+            }
+            else
+                alert("error occured")
+        })
+    }
+
+
+</script>
+
+
+
+@*@(Html.Kendo().Grid<DataAccess.User>()
+                        .Name("grid")
+                        .Columns(columns =>
+                        {
+                            columns.Bound(e => e.Username);
+                            columns.Bound(e => e.Domain);
+
+
+                            columns.Command(command => { command.Edit(); command.Destroy(); }).Width(250);
+                        })
+                        .ToolBar(toolbar => toolbar.Create())
+                        .Editable(editable => editable.Mode(GridEditMode.InLine).ConfirmDelete("Confirmation").DisplayDeleteConfirmation("Test"))
+                        .DataSource(dataSource => dataSource
+                            .Custom()
+                            .Type("odata-v4")
+                            .Schema(schema => schema
+                            .Model(m =>
+                            {
+                                m.Id(t => t.UserId);
+                                m.Field(t => t.Username);
+                                m.Field(t => t.Domain);
+
+                            }))
+                            .Transport(t =>
+                            {
+                                t.Read(new { url = new Kendo.Mvc.ClientHandlerDescriptor() { HandlerName = "read" } });
+                                t.Update(new { url = new Kendo.Mvc.ClientHandlerDescriptor() { HandlerName = "update" } });
+                                t.Create(new { url = new Kendo.Mvc.ClientHandlerDescriptor() { HandlerName = "create" } });
+                                t.Destroy(new { url = new Kendo.Mvc.ClientHandlerDescriptor() { HandlerName = "destroy" } });
+                            }
+                            )
+                            .PageSize(20)
+                            .ServerPaging(true)
+                            .ServerSorting(true)
+                            .ServerFiltering(true)
+                        )
+                        .Pageable(pageable => pageable
+                            .Refresh(true)
+                            .PageSizes(true)
+                            .ButtonCount(5))
+                        .Sortable()
+                        .Filterable()
+
+    )
+
+    <script>
+            function read() {
+                var baseUrl = "@Url.Content("~")";
+                return baseUrl + "odata/Users";
+            }
+            function update(dataItem) {
+                var baseUrl = "@Url.Content("~")";
+                return baseUrl + "odata/Users(" + dataItem.UserId + ")";
+            }
+            function create(dataItem) {
+                delete dataItem.ProductID;
+                var baseUrl = "@Url.Content("~")";
+                return baseUrl + "odata/Users";
+            }
+        function destroy(dataItem) {
+                var baseUrl = "@Url.Content("~")";
+                return baseUrl + "odata/Users(" + dataItem.UserId + ")";
+            }
+    </script>*@

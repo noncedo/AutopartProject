@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="759cc77eca6b4f25bca68f0d95b79794" Name="Diagram1" ZoomLevel="97">
+        <EntityTypeShape EntityType="AutoPartModel.Dealer" Width="1.5" PointX="12.25" PointY="0.875" />
+        <EntityTypeShape EntityType="AutoPartModel.DealerGroup" Width="1.5" PointX="10" PointY="0.875" />
+        <EntityTypeShape EntityType="AutoPartModel.DmsProvider" Width="1.5" PointX="7.75" PointY="1.25" />
+        <EntityTypeShape EntityType="AutoPartModel.FileDestination" Width="1.5" PointX="5.25" PointY="9.625" />
+        <EntityTypeShape EntityType="AutoPartModel.FileLine" Width="1.5" PointX="7.5" PointY="8.25" />
+        <EntityTypeShape EntityType="AutoPartModel.FileSource" Width="1.5" PointX="5.25" PointY="6.625" />
+        <EntityTypeShape EntityType="AutoPartModel.ILHAudit" Width="1.5" PointX="7.75" PointY="4.75" />
+        <EntityTypeShape EntityType="AutoPartModel.Log" Width="1.5" PointX="5.25" PointY="2.5" />
+        <EntityTypeShape EntityType="AutoPartModel.LogType" Width="1.5" PointX="3" PointY="0.875" />
+        <EntityTypeShape EntityType="AutoPartModel.Process" Width="1.5" PointX="0.75" PointY="6.375" />
+        <EntityTypeShape EntityType="AutoPartModel.ProcessRun" Width="1.5" PointX="3" PointY="4.375" />
+        <EntityTypeShape EntityType="AutoPartModel.Setting" Width="1.5" PointX="3" PointY="9.375" />
+        <EntityTypeShape EntityType="AutoPartModel.User" Width="1.5" PointX="9.75" PointY="4.75" />
+        <EntityTypeShape EntityType="AutoPartModel.vwProcessRunConsolidation" Width="1.5" PointX="9.75" PointY="7.75" />
+        <AssociationConnector Association="AutoPartModel.FK_Dealer_DealerGroup" />
+        <AssociationConnector Association="AutoPartModel.FK_DealerGroup_DealerGroup" />
+        <AssociationConnector Association="AutoPartModel.FK_FileDestination_FileDestination" />
+        <AssociationConnector Association="AutoPartModel.FK_FileDestination_ProcessRun" />
+        <AssociationConnector Association="AutoPartModel.FK_FileLine_FileDestination" />
+        <AssociationConnector Association="AutoPartModel.FK_FileLine_FileSource" />
+        <AssociationConnector Association="AutoPartModel.FK_File_ProcessRun" />
+        <AssociationConnector Association="AutoPartModel.FK_Log_LogType" />
+        <AssociationConnector Association="AutoPartModel.FK_Log_ProcessRun" />
+        <AssociationConnector Association="AutoPartModel.FK_LogType_LogType" />
+        <AssociationConnector Association="AutoPartModel.FK_ProcessRun_Process" />
+        <AssociationConnector Association="AutoPartModel.FK_Setting_Setting" />
+        <AssociationConnector Association="AutoPartModel.FK_ProcessRun_ProcessRun" />
+        <EntityTypeShape EntityType="AutoPartModel.vwILHConsolidation" Width="1.5" PointX="7.375" PointY="11.75" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

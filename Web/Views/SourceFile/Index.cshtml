@@ -1,0 +1,74 @@
+﻿@model int?
+@{
+    ViewBag.Title = "Index";
+}
+
+<br />
+<h3>Source Files</h3>
+<br />
+
+@(Html.Kendo().Grid<DataAccess.FileSource>()
+                            .Name("grid")
+                            .Columns(columns =>
+                            {
+                                columns.Bound(e => e.Name);
+                                columns.Bound(e => e.Path);
+
+                                columns.Bound(c => c.FileId).ClientTemplate(Html.ActionLink("View File Lines", "Index", "FileLine", new { FileSourceId = "id" }, new { @class = "k-button k-button-icontext" })
+                                    .ToHtmlString().Replace("id", "#=FileId#")).Filterable(false).Sortable(false).Title("").Width(250);
+
+                            })
+                            .Editable(editable => editable.Mode(GridEditMode.InLine).ConfirmDelete("Confirmation").DisplayDeleteConfirmation("Test"))
+                            .DataSource(dataSource => dataSource
+                                .Custom()
+                                .Type("odata-v4")
+                                .Schema(schema => schema
+                                .Model(m =>
+                                {
+                                    m.Id(t => t.FileId);
+                                    m.Field(t => t.FileId).Editable(false);
+                                    m.Field(t => t.Name);
+                                    m.Field(t => t.Path);
+
+                                }))
+                                .Transport(t =>
+                                {
+                                    t.Read(new { url = new Kendo.Mvc.ClientHandlerDescriptor() { HandlerName = "read" } });
+
+                                }
+                                )
+                                .PageSize(20)
+                                .ServerPaging(true)
+                                .ServerSorting(true)
+                                .ServerFiltering(true)
+                                .ServerGrouping(true)
+                            )
+                            .Pageable(pageable => pageable
+                                .Refresh(true)
+                                .PageSizes(true)
+                                .ButtonCount(5))
+                            .Sortable()
+                            .Filterable()
+)
+
+<script>
+    function read() {
+        @if(Model.HasValue)
+        {
+            <text>
+                var baseUrl = "@Url.Content("~")";
+                return baseUrl + "odata/SourceFiles?$filter=ProcessRunId eq " + @Model;
+            </text>
+        }
+        else
+        {
+            <text>
+                var baseUrl = "@Url.Content("~")";
+                return baseUrl + "odata/SourceFiles";
+            </text>
+        }
+
+    }
+
+</script>
+

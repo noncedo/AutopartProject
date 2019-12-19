@@ -1,0 +1,213 @@
+﻿@model List<DataAccess.Dealer>
+
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<br />
+<h3>Dealer </h3>
+<br />
+
+
+<div class=" table-responsive">
+    <table class="table table-striped table-hover table-bordered" id="table">
+
+        <thead>
+            <tr>
+                <th>Code</th>
+                <th>Name</th>
+                <th>Dealer Group</th>
+                <th>Edit</th>
+                    <th>Delete</th>
+            </tr>
+        </thead>
+
+        <tbody>
+        @for(int i=0; i < Model.Count; i++)
+        {
+            <tr class=@(Model[i].Code + "_" + i)>
+                <td class=@("code_" + i )>@Model[i].Code</td>
+                <td class=@("name_" + i )>@Model[i].Name</td>
+                <td class=@("dealer_" + i )> 
+                <select id="groupSelect" class="dropdown form-control">
+                    @foreach(var val in (List<DataAccess.DealerGroup>)ViewData["DealerGroups"])
+                    {
+                        <option class="dropdown-item" value="@val.DealerGroupId">@val.Name</option>
+                    }
+                </select>
+                <td><input id=@("editBtn_" + i) type="button" value="Edit" onclick="Edit('@Model[i].Code',@Model[i].DealerId,@Model[i].DealerGroupId, @i, '@Model[i].Name')" class="btn btn-info" />
+                    @*<input type="button" value="Cancel" onclick="CancelEdit(@i)" class="btn btn-warning"/>*@ </td>
+                <td><input type="button" value="Delete" class="btn btn-danger" onclick="Delete(@Model[i].DealerId)"/> </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>
+
+
+<script>
+
+    function Edit(code,dealerId,delaerGroupId, index, name) {
+
+        var btnText = $('#editBtn_' + index).val();
+
+        code = code + '_' + index;
+
+        alert(code);
+
+        if (btnText == 'Edit') {
+            $('#editBtn_' + index).val('Save');
+            //var oldCodeHtml = $('.' + code + ' td.code_' + index).html();
+            $('.' + code + ' td.code_' + index).empty();
+            $('.' + code + ' td.code_' + index).html('<input id="txtCode_' + index + '" type="text" value="' + code.replace('_' + index, '') + '" class="form-control" />');
+
+            $('.' + code + ' td.name_' + index).empty();
+            $('.' + code + ' td.name_' + index).html('<input id="txtName_' + index + '"  type="text" value="' + name + '" class="form-control" />');
+
+        }
+        else {
+            $('#editBtn_' + index).val('Edit');
+
+            var myObj =
+            {
+                id: dealerId,
+                groupId: $('#groupSelect').val(),
+                name: $('#txtName_' + index).val(),
+                code: $('#txtCode_' + index).val(),
+                dealer: $('#groupSelect :selected').text()
+            }
+            $.post('@Url.Action("UpdateDealer","Dealer")', myObj, function (result) {
+                if (result.success == true) {
+                alert('Updated!');
+                    location.reload();
+                }
+                else
+                    alert("error occured")
+            });
+        }
+    }
+
+    function Delete(dealerId) {
+        $.post('@Url.Action("Delete", "Dealer")', { dealerId: dealerId }, function (result) {
+            if (result.success == true) {
+                alert("Deleted");
+                location.reload();
+            }
+            else
+                alert("error occured")
+        })
+    }
+
+
+    function Delete(dealerId) {
+        $.post('@Url.Action("Delete", "Dealer")', { dealerId: dealerId }, function (result) {
+            if (result.success == true) {
+                alert("Deleted");
+                location.reload();
+            }
+            else
+                alert("error occured")
+        })
+    }
+    </script>
+
+
+@*@(Html.Kendo().Grid<DataAccess.Dealer>()
+                            .Name("grid")
+                            .Columns(columns =>
+                            {
+                                columns.Bound(e => e.Code);
+                                columns.Bound(e => e.Name);
+                                columns.ForeignKey(e => e.DealerGroupId, (IEnumerable<DataAccess.DealerGroup>)ViewData["DealerGroups"], "DealerGroupId", "Name")
+                                .EditorTemplateName("GridForeignKey");
+
+                                columns.Command(command => { command.Edit(); command.Destroy(); }).Width(250);
+                            })
+                            .ToolBar(toolbar => toolbar.Create())
+                            .Editable(editable => editable.Mode(GridEditMode.InLine).ConfirmDelete("Confirmation").DisplayDeleteConfirmation("Test"))
+                            .DataSource(dataSource => dataSource
+                                .Custom()
+                                .Type("odata-v4")
+                                .Schema(schema => schema
+                                .Model(m =>
+                                {
+                                    m.Id(t => t.DealerId);
+                                    m.Field(t => t.DealerId).Editable(false);
+                                    m.Field(t => t.DealerGroupId);
+                                    m.Field(t => t.Name);
+                                    m.Field(t => t.Code);
+                                }))
+                                .Transport(t =>
+                                {
+                                    t.Read(new { url = new Kendo.Mvc.ClientHandlerDescriptor() { HandlerName = "read" } });
+                                    t.Update(new { url = new Kendo.Mvc.ClientHandlerDescriptor() { HandlerName = "update" } });
+                                    t.Create(new { url = new Kendo.Mvc.ClientHandlerDescriptor() { HandlerName = "create" } });
+                                    t.Destroy(new { url = new Kendo.Mvc.ClientHandlerDescriptor() { HandlerName = "destroy" } });
+                                }
+                                )
+                                .PageSize(20)
+                                .ServerPaging(true)
+                                .ServerSorting(true)
+                                .ServerFiltering(true)
+                            )
+                            .Pageable(pageable => pageable
+                                .Refresh(true)
+                                .PageSizes(true)
+                                .ButtonCount(5))
+                            .Sortable()
+                            .Filterable()
+
+    )*@
+
+@*<script>
+    function read() {
+        var baseUrl = "@Url.Content("~")";
+        return baseUrl + "odata/Dealers";
+    }
+    function update(dataItem) {
+        alert("Update");
+        var baseUrl = "@Url.Content("~")";
+        return baseUrl + "odata/Dealers(" + dataItem.DealerId + ")";
+    }
+    function create(dataItem) {
+        delete dataItem.ProductID;
+        var baseUrl = "@Url.Content("~")";
+        return baseUrl + "odata/Dealers";
+    }
+    function destroy(dataItem) {
+        var baseUrl = "@Url.Content("~")";
+        return baseUrl + "odata/Dealers(" + dataItem.DealerId + ")";
+    }
+</script>
+
+
+<script src="~/Scripts/table-edits.js"></script>
+<script src="~/Scripts/table-edits.min.js"></script>
+
+
+<script type="text/javascript">
+    $(function() {
+
+        var table = $('#table');
+
+        table.Tabledit({
+            url: '@Url.Action("Update","Dealer")',
+            buttons: {
+                edit: {
+                    class: 'btn btn-sm btn-primary',
+                    html: '<span class="glyphicon glyphicon-pencil"></span> &nbsp EDIT',
+                    action: 'edit'
+                }
+            },
+           
+            columns: {
+                identifier: [0, 'id'],
+                editable: [[1, 'Code'], [2, 'Name'], [3, 'DealerGroupId']]
+            }
+        });
+    });
+
+
+</script>*@
