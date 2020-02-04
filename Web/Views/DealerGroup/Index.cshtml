@@ -8,6 +8,15 @@
 <h3>Dealer Groups</h3>
 <br />
 
+<div class="row p-2">
+    <div class="col-3">
+        @*btn btn-outline-dark btn-block*@
+        <input type="button" value="Create New" onclick="Add('')" class="btn btn-primary" />
+    </div>
+    <div class="offset-9">
+    </div>
+</div>
+<br />
 
 <div class=" table-responsive">
     <table class="table table-striped table-hover table-bordered" id="table">
@@ -29,7 +38,7 @@
                     <td class=@("code_" + i )>@Model[i].Code</td>
                     <td class=@("name_" + i )>@Model[i].Name</td>
                     <td class=@("dmsProvider_" + i )>
-                        <select id="providerSelect" class="dropdown form-control">
+                        <select id=@("providerSelect_" + i) class="dropdown form-control">
                             @foreach (var val in (List<DataAccess.DmsProvider>)ViewData["DmsProviders"])
                             {
                                 <option class="dropdown-item" value="@val.DmsProviderId">@val.Name</option>
@@ -37,7 +46,8 @@
                         </select>
                     <td>
                         <input id=@("editBtn_" + i) type="button" value="Edit" onclick="Edit('@Model[i].Code',@Model[i].DealerGroupId,'@Model[i].Name', @i, @Model[i].DmsProviderId)" class="btn btn-info" />
-                        @*<input type="button" value="Cancel" onclick="CancelEdit(@i)" class="btn btn-warning"/>*@
+                        <input id=@("cancelBtn_" + i) type="button" value="Cancel" onclick="Cancel(@i, '@Model[i].Code', '@Model[i].Name')" class="btn btn-outline-info" hidden />                    
+    @*<input type="button" value="Cancel" onclick="CancelEdit(@i)" class="btn btn-warning"/>*@
                     </td>
                     <td><input type="button" value="Delete" class="btn btn-danger" onclick="Delete(@Model[i].DealerGroupId)" /> </td>
                 </tr>
@@ -47,6 +57,36 @@
 </div>
 
 <script>
+    function Add(action) {
+
+        if (action == '') {
+            $('#table tr:first')
+                .after('<tr>' +
+                    '<td><input id="txtCode" type="text" placeholder="Code" class="form-control" /></td>' +
+                '<td><input id="txtName" type="text" placeholder="Name" class="form-control" /></td>' +
+                '<td><select id="providerSelectNew" class="dropdown form-control"/></td>' +
+                '<td><input id="saveNew" type="button" value="Save" class="btn btn-info" onclick="Add(\'Save\')"/</td><td></td></tr >');
+
+            $('#providerSelect_0 option').clone().appendTo('#providerSelectNew');
+        }
+        else if (action == 'Save') {
+            $('#saveNew').attr('hidden', 'hidden');
+            var myObj =
+            {
+                code: $('#txtCode').val(),
+                name: $('#txtName').val(),
+                provider: $('#providerSelectNew').val()
+            }
+            $.post('@Url.Action("Save","DealerGroup")', myObj, function (result) {
+                if (result.success == true) {
+                    alert('Saved!');
+                    location.reload();
+                }
+                else
+                    alert("error occured")
+            });
+        }
+    }
     function Edit(code,dealerGroupId,name, index, dmsProviderId) {
 
         var btnText = $('#editBtn_' + index).val();
@@ -57,8 +97,7 @@
 
         if (btnText == 'Edit') {
             $('#editBtn_' + index).val('Save');
-
-            alert(firstCode);
+            $('#cancelBtn_' + index).removeAttr('hidden');
 
             $('.' + code + ' td.code_' + index).empty();
             $('.' + code + ' td.code_' + index).html('<input id="txtCode_' + index + '" type="text" value="' + firstCode/*code.replace('_' + index, '')*/ + '" class="form-control" />');
@@ -73,10 +112,10 @@
             var myObj =
             {
                 id: dealerGroupId,
-                dmsProviderId: $('#providerSelect').val(),
+                dmsProviderId: $('#providerSelect_' + index).val(),
                 name: $('#txtName_' + index).val(),
                 code: $('#txtCode_' + index).val(),
-                dmsProvider: $('#providerSelect :selected').text(),
+                dmsProvider: $('#providerSelect_' + index +' :selected').text(),
             }
            
 
@@ -92,7 +131,16 @@
             });
         }
     }
+    function Cancel(index, code, name) {
+        $('#cancelBtn_' + index).attr('hidden', 'hidden');
+        $('#editBtn_' + index).val('Edit');
 
+        code = code + '_' + index;
+        $('.' + code + ' td.code_' + index).html(code);
+        $('.' + code + ' td.name_' + index).html(name);
+
+
+    }
     function Delete(dealerId) {
         $.post('@Url.Action("Delete", "DealerGroup")', { dealerId: dealerId }, function (result) {
             if (result.success == true) {

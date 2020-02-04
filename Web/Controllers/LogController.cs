@@ -20,8 +20,8 @@ namespace Web.Controllers
         public ActionResult Index(int? ProcessRunId)
         {
             ViewData["LogTypes"] = repository.Get<LogType>();
-           
-            return View(ProcessRunId);
+            var logs = repository.Get<Log>().Where(x => x.ProcessRunID == ProcessRunId).ToList();
+            return View(logs);
         }
     }
 }

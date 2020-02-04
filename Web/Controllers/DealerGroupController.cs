@@ -54,6 +54,23 @@ namespace Web.Controllers
 
             return Json(new { success = true });
         }
+
+        [HttpPost]
+        public JsonResult Save(string code, string name, int provider)
+        {
+            var dg = new DealerGroup()
+            {
+                Code = code,
+                Name = name,
+                DmsProviderId = provider,
+                
+            };
+
+            repository.Create<DealerGroup>(dg);
+            repository.Save();
+
+            return Json(new { success = true });
+        }
     }
 
 }

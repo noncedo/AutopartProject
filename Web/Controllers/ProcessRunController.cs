@@ -29,8 +29,8 @@ namespace Web.Controllers
         public ActionResult Index(int? ProcessId)
         {
             ViewData["User"] = HttpContext.User.Identity.Name;
-
-            return View(ProcessId);
+            var processRuns = repository.Get<vwProcessRunConsolidation>().Where(x => x.ProcessId == ProcessId.Value).ToList();
+            return View(processRuns);
         }
     }
 }

@@ -51,7 +51,7 @@ namespace Web.Controllers
         [HttpPost]
         public JsonResult Save(string name)
         {
-            var provider = new DmsProvider()
+            var provider = new DataAccess.DmsProvider()
             {
                 Name = name
             };

@@ -18,6 +18,7 @@ namespace DataAccess
         public DealerGroup()
         {
             this.Dealers = new HashSet<Dealer>();
+            
         }
     
         public int DealerGroupId { get; set; }

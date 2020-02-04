@@ -10,14 +10,15 @@
 <h3>Dealer </h3>
 <br />
 
+@*btn btn-outline-dark btn-block*@
 <div class="row p-2">
     <div class="col-3">
-        <input type="button" value="Add" onclick="Add('')" class="btn btn-outline-dark btn-block" />
+        <input type="button" value="Create New" onclick="Add('')" class="btn btn-primary" />
     </div>
     <div class="offset-9">
     </div>
 </div>
-
+<br />
 <div class=" table-responsive">
     <table class="table table-striped table-hover table-bordered" id="table">
 
@@ -26,8 +27,8 @@
                 <th>Code</th>
                 <th>Name</th>
                 <th>Dealer Group</th>
-                <th></th>
-                <th></th>
+                <th>Edit</th>
+                <th>Delete</th>
 
             </tr>
         </thead>
@@ -114,10 +115,10 @@
             var myObj =
             {
                 id: dealerId,
-                groupId: $('#groupSelect').val(),
+                groupId: $('#groupSelect_' + index).val(),
                 name: $('#txtName_' + index).val(),
                 code: $('#txtCode_' + index).val(),
-                dealer: $('#groupSelect :selected').text()
+                dealer: $('#groupSelect_' + index + ' :selected').text()
             }
             $.post('@Url.Action("UpdateDealer","Dealer")', myObj, function (result) {
                 if (result.success == true) {

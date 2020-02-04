@@ -1,4 +1,4 @@
-﻿@model int?
+﻿@model List<DataAccess.vwProcessRunConsolidation>
 
 @{
     ViewBag.Title = "Index";
@@ -8,76 +8,119 @@
 <h3>Process Run</h3>
 <br />
 
-@(Html.Kendo().Grid<DataAccess.vwProcessRunConsolidation>()
-                        .Name("grid")
-                        .Columns(columns =>
-                        {
-                            columns.Bound(e => e.Name);
-                            columns.Bound(e => e.Start).Format("{0:dd/MMMM/yyyy hh:mm:ss tt}");
-                            columns.Bound(e => e.End).Format("{0:dd/MMMM/yyyy hh:mm:ss tt}");
-                            columns.Bound(e => e.RunStatus).ClientTemplate
-                            (
-                                "# if( RunStatus == null) { # <label>In Progess</label> # } " +
-                                "else if (RunStatus) {# <label>Success</label> # } " +
-                                "else { # <label>Error</label> #} #"
+<div class=" table-responsive">
+    <table class="table table-striped table-hover table-bordered" id="table">
 
-                            );
-                            columns.Bound(e => e.FileSourceCount);
-                            columns.Bound(e => e.FileDestinationCount);
-                            columns.Bound(e => e.ActiveDealerCount);
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Start</th>
+                <th>End</th>
+                <th>Run Status</th>
+                <th>File Source Count</th>
+                <th>File Destination Count</th>
+                <th>Active Dealer Count</th>
+                <th></th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
 
-                            columns.Bound(c => c.ProcessRunId).ClientTemplate(Html.ActionLink("Source Files", "Index", "SourceFile", new { ProcessRunId = "id" }, new { @class = "k-button k-button-icontext" })
-                                .ToHtmlString().Replace("id", "#=ProcessRunId#")).Filterable(false).Sortable(false).Title("").Width(250);
+        <tbody>
+            @for (int i = 0; i < Model.Count; i++)
+            {
+            <tr>
+                <td>@Model[i].Name</td>
+                <td>@Model[i].Start</td>
+                <td>@Model[i].End</td>
+                <td>@Model[i].RunStatus </td>
+                <td>@Model[i].FileSourceCount</td>
+                <td>@Model[i].FileDestinationCount</td>
+                <td>@Model[i].ActiveDealerCount</td>
+                <td>
+                    @Html.ActionLink("Source Files", "Index", "SourceFile", new { ProcessRunId = Model[i].ProcessRunId }, new { @class = "btn btn-secondary" })
+                </td>
+                <td>
+                    @Html.ActionLink("Destination Files", "Index", "DestinationFile", new { ProcessRunId = Model[i].ProcessRunId }, new { @class = "btn btn-secondary" })
+                </td>
+                <td>
+                    @Html.ActionLink("Log", "Index", "Log", new { ProcessRunId = Model[i].ProcessRunId }, new { @class = "btn btn-secondary" })
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
+   </div>
+    @*@(Html.Kendo().Grid<DataAccess.vwProcessRunConsolidation>()
+                                .Name("grid")
+                                .Columns(columns =>
+                                {
+                                    columns.Bound(e => e.Name);
+                                    columns.Bound(e => e.Start).Format("{0:dd/MMMM/yyyy hh:mm:ss tt}");
+                                    columns.Bound(e => e.End).Format("{0:dd/MMMM/yyyy hh:mm:ss tt}");
+                                    columns.Bound(e => e.RunStatus).ClientTemplate
+                                    (
+                                        "# if( RunStatus == null) { # <label>In Progess</label> # } " +
+                                        "else if (RunStatus) {# <label>Success</label> # } " +
+                                        "else { # <label>Error</label> #} #"
 
-                            columns.Bound(c => c.ProcessRunId).ClientTemplate(Html.ActionLink("Destination Files", "Index", "DestinationFile", new { ProcessRunId = "id" }, new { @class = "k-button k-button-icontext" })
-                                .ToHtmlString().Replace("id", "#=ProcessRunId#")).Filterable(false).Sortable(false).Title("").Width(250);
+                                    );
+                                    columns.Bound(e => e.FileSourceCount);
+                                    columns.Bound(e => e.FileDestinationCount);
+                                    columns.Bound(e => e.ActiveDealerCount);
 
-                            columns.Bound(c => c.ProcessRunId).ClientTemplate(Html.ActionLink("Log", "Index", "Log", new { ProcessRunId = "id" }, new { @class = "k-button k-button-icontext" })
-                                .ToHtmlString().Replace("id", "#=ProcessRunId#")).Filterable(false).Sortable(false).Title("").Width(250);
-                        })
-                        .Editable(editable => editable.Mode(GridEditMode.InLine).ConfirmDelete("Confirmation").DisplayDeleteConfirmation("Test"))
-                        .DataSource(dataSource => dataSource
-                            .Custom()
-                            .Type("odata-v4")
-                            .Schema(schema => schema
-                            .Model(m =>
-                            {
-                                m.Id(t => t.ProcessId);
-                                m.Field(t => t.Name);
-                                m.Field(t => t.Start);
-                                m.Field(t => t.End);
-                                m.Field(t => t.RunStatus);
-                                m.Field(t => t.FileSourceCount);
-                                m.Field(t => t.FileDestinationCount);
-                                m.Field(t => t.ActiveDealerCount);
-                                m.Field(t => t.ProcessRunId);
-                                m.Field(t => t.ProcessId);
-                            }))
-                            .Transport(t =>
-                            {
-                                t.Read(new { url = new Kendo.Mvc.ClientHandlerDescriptor() { HandlerName = "read" } });
+                                    columns.Bound(c => c.ProcessRunId).ClientTemplate(Html.ActionLink("Source Files", "Index", "SourceFile", new { ProcessRunId = "id" }, new { @class = "k-button k-button-icontext" })
+                                        .ToHtmlString().Replace("id", "#=ProcessRunId#")).Filterable(false).Sortable(false).Title("").Width(250);
 
-                            }
-                            )
-                            .PageSize(20)
-                            .ServerPaging(true)
-                            .ServerSorting(true)
-                            .ServerFiltering(true)
-                            .ServerGrouping(true)
-                        )
-                        .Pageable(pageable => pageable
-                            .Refresh(true)
-                            .PageSizes(true)
-                            .ButtonCount(5))
-                        .Sortable()
-                        .Filterable()
-)
+                                    columns.Bound(c => c.ProcessRunId).ClientTemplate(Html.ActionLink("Destination Files", "Index", "DestinationFile", new { ProcessRunId = "id" }, new { @class = "k-button k-button-icontext" })
+                                        .ToHtmlString().Replace("id", "#=ProcessRunId#")).Filterable(false).Sortable(false).Title("").Width(250);
 
-<script>
-    function read(dataItem) {
+                                    columns.Bound(c => c.ProcessRunId).ClientTemplate(Html.ActionLink("Log", "Index", "Log", new { ProcessRunId = "id" }, new { @class = "k-button k-button-icontext" })
+                                        .ToHtmlString().Replace("id", "#=ProcessRunId#")).Filterable(false).Sortable(false).Title("").Width(250);
+                                })
+                                .Editable(editable => editable.Mode(GridEditMode.InLine).ConfirmDelete("Confirmation").DisplayDeleteConfirmation("Test"))
+                                .DataSource(dataSource => dataSource
+                                    .Custom()
+                                    .Type("odata-v4")
+                                    .Schema(schema => schema
+                                    .Model(m =>
+                                    {
+                                        m.Id(t => t.ProcessId);
+                                        m.Field(t => t.Name);
+                                        m.Field(t => t.Start);
+                                        m.Field(t => t.End);
+                                        m.Field(t => t.RunStatus);
+                                        m.Field(t => t.FileSourceCount);
+                                        m.Field(t => t.FileDestinationCount);
+                                        m.Field(t => t.ActiveDealerCount);
+                                        m.Field(t => t.ProcessRunId);
+                                        m.Field(t => t.ProcessId);
+                                    }))
+                                    .Transport(t =>
+                                    {
+                                        t.Read(new { url = new Kendo.Mvc.ClientHandlerDescriptor() { HandlerName = "read" } });
+
+                                    }
+                                    )
+                                    .PageSize(20)
+                                    .ServerPaging(true)
+                                    .ServerSorting(true)
+                                    .ServerFiltering(true)
+                                    .ServerGrouping(true)
+                                )
+                                .Pageable(pageable => pageable
+                                    .Refresh(true)
+                                    .PageSizes(true)
+                                    .ButtonCount(5))
+                                .Sortable()
+                                .Filterable()
+    )*@
+
+    <script>
+    @*function read(dataItem) {
         //return "../odata/ProcessRuns?(" + @Model + ")";
         //$filter=Name eq 'Trip in US'
-        
+
         @if(Model.HasValue)
         {
             <text>
@@ -92,7 +135,7 @@
                 return baseUrl + "odata/ProcessRuns";
             </text>
         }
-    }
+    }*@
 
 
-</script>
+    </script>

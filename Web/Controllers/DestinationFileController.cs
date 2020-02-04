@@ -20,8 +20,8 @@ namespace Web.Controllers
         public ActionResult Index(int? ProcessRunId)
         {
             ViewData["User"] = HttpContext.User.Identity.Name;
-            
-            return View(ProcessRunId);
+            var dFiles = repository.Get<FileDestination>().Where(x => x.ProcessRunId == ProcessRunId.Value).ToList();
+            return View(dFiles);
         }
     }
 }
